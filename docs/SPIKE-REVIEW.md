@@ -43,7 +43,7 @@ A tuned experiment exits zero on its own two-case success. A green CI job theref
 
 ## Exact-code Linux CI
 
-[Run 39085904262](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39085904262) passed for executable-source commit a5714c76eeea22b37b877566ddaa4faaf4b791df: locked install, typecheck, fixture tests, build, default-limit reproduction and explicit twenty-second experiment. Linux default interrupted recovery failed the watchdog; tuned interrupted recovery completed in 23,058 ms. Downloaded sanitized reports are in evidence/ci-default-observation.json and evidence/ci-lease-20-observation.json. Subsequent changes in this review are documentation/evidence only.
+[Run 39085904262](https://github.com/MargusHemlex/agent-reliability-lab-private-history-backup-20261018/actions/runs/39085904262) passed for executable-source commit a5714c76eeea22b37b877566ddaa4faaf4b791df: locked install, typecheck, fixture tests, build, default-limit reproduction and explicit twenty-second experiment. Linux default interrupted recovery failed the watchdog; tuned interrupted recovery completed in 23,058 ms. Downloaded sanitized reports are in evidence/ci-default-observation.json and evidence/ci-lease-20-observation.json. Subsequent changes in this review are documentation/evidence only.
 
 ## Subsequent gate resolution
 

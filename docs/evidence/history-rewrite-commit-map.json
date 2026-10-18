@@ -1,0 +1,75 @@
+{
+  "kind": "history_rewrite_mapping",
+  "originalHistoryPrivate": true,
+  "evidencePayloadsRelabelled": false,
+  "commits": [
+    {
+      "originalCommit": "08d74b4ab1e309f8d1ddb3f941c0aee110f8600c",
+      "rewrittenCommit": "a166cf8d879a848f2eed46d8a7f0d86491cc2e83"
+    },
+    {
+      "originalCommit": "16b047018a7b2dba286a38146104721c11113af9",
+      "rewrittenCommit": "5f92b33476ff3a9dc6759916283e8496bb018fde"
+    },
+    {
+      "originalCommit": "19ed1d16c5c6492a49b9a6850fd083c5d0b42dd3",
+      "rewrittenCommit": "7584228d339a523d386473e302f19681f5bc776d"
+    },
+    {
+      "originalCommit": "1ffc5e4d03071d9e1f2c22394196811ada0e1f50",
+      "rewrittenCommit": "8dc086aa16c905ffccafbca7aec9cedb597b369e"
+    },
+    {
+      "originalCommit": "227f8b78e73333ff6fd4fa05fd6319cd45d9c20f",
+      "rewrittenCommit": "663746aa0f700f737e242117a3971c003774b2ec"
+    },
+    {
+      "originalCommit": "3546adb9a7539c449934bea2cc4b80b6d09c0610",
+      "rewrittenCommit": "63875145362bff2f8e4fc3236a4da48e0062bdca"
+    },
+    {
+      "originalCommit": "36244f0eb89927d37ee40801dab3e5d12dcee28a",
+      "rewrittenCommit": "087fa2585902e986d21235b71d0fde4ca10ae8ef"
+    },
+    {
+      "originalCommit": "412534a38edc2e28265b06e88d4d881656ef4680",
+      "rewrittenCommit": "760b049520994bc97ab5927df1a80ed72bb5c986"
+    },
+    {
+      "originalCommit": "4b38082cc52711ed0105a0a461c4507227787b81",
+      "rewrittenCommit": "710969a09cc18050ea0fcb386e8964f28222cbf7"
+    },
+    {
+      "originalCommit": "69e4953459f586379e25585d8359792df28182ed",
+      "rewrittenCommit": "b7570aedae4648857a47512d30b98d947965c961"
+    },
+    {
+      "originalCommit": "a5714c76eeea22b37b877566ddaa4faaf4b791df",
+      "rewrittenCommit": "552b970e3f910d5135f15b95b67449b420b33e1a"
+    },
+    {
+      "originalCommit": "b78176d9522ec33364988856430696c2c6ec2614",
+      "rewrittenCommit": "567c55265c204b58a3813ce1d793c5b54d8ddbab"
+    },
+    {
+      "originalCommit": "bf1cfb27bb83142b5ecb86317e2b100846170cca",
+      "rewrittenCommit": "083ffd26b88e21d61a83aae5b4fb049f9556b6a3"
+    },
+    {
+      "originalCommit": "c0a90ddc28082544741e2a0185c449ccc5353fae",
+      "rewrittenCommit": "8888a772a7540b721c8c9455f04fb065f5beae17"
+    },
+    {
+      "originalCommit": "d61de3ef635097af81dfe61e597432516a39c148",
+      "rewrittenCommit": "8d5ba40df9164e610475551c2b36a65a4d0fd6b6"
+    },
+    {
+      "originalCommit": "dbac8b07248ccea48e306e9fc6dec8aa3593f309",
+      "rewrittenCommit": "897c794c9a8f7d96ae3220c55fd97bed6e6fff1c"
+    },
+    {
+      "originalCommit": "e77beeb0a9bc0632a260fbacc229765d9f4e41ab",
+      "rewrittenCommit": "b27cfd45912423dc0cf320fb89139a3986002467"
+    }
+  ]
+}

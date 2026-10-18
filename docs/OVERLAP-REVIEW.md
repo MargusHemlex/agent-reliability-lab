@@ -37,7 +37,7 @@ Both Codex final reviewers support constrained GO pending exact-code Linux CI an
 
 **GO for the next local single-worker milestone; keep eve 0.80.1.** No framework switch is required for this scope. All four reviewers approve this bounded decision. This is not full-application acceptance or approval to publish.
 
-[Exact-code Linux CI](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39113383786) passed for commit 19ed1d16c5c6492a49b9a6850fd083c5d0b42dd3. The downloaded reports were inspected independently of the green job status:
+[Exact-code Linux CI](https://github.com/MargusHemlex/agent-reliability-lab-private-history-backup-20261018/actions/runs/39113383786) passed for commit 19ed1d16c5c6492a49b9a6850fd083c5d0b42dd3. The downloaded reports were inspected independently of the green job status:
 
 | Check | Linux observation |
 | --- | --- |

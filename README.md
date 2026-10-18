@@ -4,7 +4,7 @@ An engineering lab for durable agent workflows: exact human approval, crash reco
 
 A synthetic delivery-support agent has three tools: read a delivery, read its resolution policy and record an approved resolution. The worker can die after the sandbox commits but before it receives the result. Recovery must recover that result without creating another effect. Denied actions must create none.
 
-**Repository status: PRIVATE. Publication is on hold pending a reviewed history cleanup and a separate owner decision.** See the [publication review](docs/PUBLICATION-REVIEW.md). The optional real-model adapter is implemented; genuine provider execution remains **not run**. Default tests need no model account, API key or paid call.
+**Repository status: PRIVATE. History cleanup is complete; publication still requires a separate owner decision.** See the [publication review](docs/PUBLICATION-REVIEW.md) and [verified history cleanup](docs/HISTORY-CLEANUP.md). The optional real-model adapter is implemented; genuine provider execution remains **not run**. Default tests need no model account, API key or paid call.
 
 ## Start here
 
@@ -21,7 +21,7 @@ A synthetic delivery-support agent has three tools: read a delivery, read its re
 - Persisted budgets survive restarts. Unknown provider usage blocks another paid call; monetary reservations remain estimates.
 - Strict JSON and Markdown reports record source hashes, denominators, measured effects and unknown measurements explicitly.
 
-The current documentation-stage [Linux CI](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39123089377) passed **79 unit/HTTP tests**, **31 fixture scenarios plus two negative controls**, the **two-case guided walkthrough**, an offline compiled Gateway-adapter workflow and runtime regression checks. See the [publication review](docs/PUBLICATION-REVIEW.md) for exact scope, provenance and remaining holds. The offline adapter test simulates provider transport; it establishes no live-model success rate.
+The current documentation-stage [Linux CI](https://github.com/MargusHemlex/agent-reliability-lab-private-history-backup-20261018/actions/runs/39123089377) passed **79 unit/HTTP tests**, **31 fixture scenarios plus two negative controls**, the **two-case guided walkthrough**, an offline compiled Gateway-adapter workflow and runtime regression checks. See the [publication review](docs/PUBLICATION-REVIEW.md) for exact scope, provenance and remaining holds. The offline adapter test simulates provider transport; it establishes no live-model success rate.
 
 ## Reproduce without a model key
 

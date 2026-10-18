@@ -1,5 +1,7 @@
 # Kimi K3 final documentation-stage review
 
+This is the historical verdict on the pre-rewrite snapshot. The subsequent [owner-authorized history cleanup](HISTORY-CLEANUP.md) resolves the historical-identifier condition for the active repository; this review is not retrospectively reattributed to new commit IDs.
+
 On 2026-10-18, the previously unavailable fourth review completed successfully. Authenticated service connectivity was confirmed separately. The CLI requested `moonshot-ai/kimi-k3`; a returned model version was not exposed. This is a scoped static review of the supplied snapshot, not independent test execution or a full security audit.
 
 **Verdict: PASS for current-tree documentation/code acceptance. Publication remains HOLD.** The historical confidential identifier and a separate owner release decision remain unresolved. All four documentation-stage reviewers have now supplied a scoped verdict.
