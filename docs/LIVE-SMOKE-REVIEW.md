@@ -1,6 +1,6 @@
 # First genuine bounded live smoke
 
-**Result: PASS, one synthetic sample. Repository remains PRIVATE.**
+**Result: PASS, one synthetic sample. The repository was private during execution; its cleaned portfolio release was subsequently authorized.**
 
 On 2026-10-18 the owner explicitly authorized one genuine model workflow with at most five calls and a USD 0.10 estimated per-run cap. The test used the normal real Gateway adapter, not the offline transport preload. No additional model run was required.
 

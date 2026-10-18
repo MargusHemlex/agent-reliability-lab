@@ -1,5 +1,7 @@
 # Confidential history cleanup
 
+Historical scope: both repositories were private during cleanup. The owner subsequently authorized [public release](PUBLIC-RELEASE.md) of the cleaned active repository only; the original history archive and local bundle remain private.
+
 Historical scope: this document records the results available at that stage. The subsequent [first genuine live smoke](LIVE-SMOKE-REVIEW.md) passed on 2026-10-18; its new evidence does not retrospectively change earlier `not_run` observations.
 
 On 2026-10-18 the owner authorized removing the confidential product identifier from Git history while retaining the original history privately. **The active repository and the backup remain PRIVATE. This is not an authorization to publish.**

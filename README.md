@@ -4,7 +4,7 @@ An engineering lab for durable agent workflows: exact human approval, crash reco
 
 A synthetic delivery-support agent has three tools: read a delivery, read its resolution policy and record an approved resolution. The worker can die after the sandbox commits but before it receives the result. Recovery must recover that result without creating another effect. Denied actions must create none.
 
-**Repository status: PRIVATE. History cleanup is complete; publication still requires a separate owner decision.** See the [publication review](docs/PUBLICATION-REVIEW.md) and [verified history cleanup](docs/HISTORY-CLEANUP.md). The optional real-model adapter passed [one bounded genuine live smoke](docs/LIVE-SMOKE-REVIEW.md): three calls, one expected effect and USD 0.000272 estimated cost. Default tests need no model account, API key or paid call.
+**Public portfolio release, authorized on 2026-10-18. The original history archive remains private.** See the [publication review](docs/PUBLICATION-REVIEW.md) and [verified history cleanup](docs/HISTORY-CLEANUP.md). The optional real-model adapter passed [one bounded genuine live smoke](docs/LIVE-SMOKE-REVIEW.md): three calls, one expected effect and USD 0.000272 estimated cost. Default tests need no model account, API key or paid call.
 
 ## Start here
 
@@ -55,4 +55,4 @@ The author designed the application authorization transactions, sandbox contract
 - [Testing and evidence](docs/TESTING.md), [limitations](docs/LIMITATIONS.md) and [dependency notices](docs/THIRD-PARTY-NOTICES.md).
 - [Security reporting](SECURITY.md), [contributing](CONTRIBUTING.md) and [license](LICENSE).
 
-This repository contains synthetic portfolio code rather than original product implementations. Publication requires a separate explicit owner decision. Existing products and deployments remain unchanged.
+This repository contains synthetic portfolio code rather than original product implementations. The owner authorized publication of this cleaned portfolio repository only. The original history archive, API credentials, existing products and deployments remain private or unchanged.

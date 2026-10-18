@@ -7,6 +7,6 @@
 - Reports describe finite samples, not statistical reliability estimates. Unknown usage/cost remains null. Estimated per-run model caps are not hard account-wide billing limits; unknown usage permanently halts that run.
 - Local access control is not enterprise identity. The host owner/filesystem and UTC clock are trusted. Cleanup is best effort; source freshness is not a signed build attestation.
 - Core desktop operator flows were exercised. Native reset-confirmation completion and mobile browser verification remain unverified.
-- Current-tree review found no private product source or real keys. The historical confidential identifier has been removed from the active history, with the original history retained in a private archive. Publication still requires explicit owner approval; the repository stays private.
+- Current-tree review found no private product source or real keys. The historical confidential identifier has been removed from the active history, with the original history retained in a private archive. The owner authorized publication of the cleaned active repository; the original history archive remains private.
 
 No real customer integration, production deployment or production readiness is represented. See [publication review](PUBLICATION-REVIEW.md), [threat model](THREAT-MODEL.md) and the dated [evidence index](evidence/README.md).
