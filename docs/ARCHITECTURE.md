@@ -23,7 +23,7 @@ flowchart LR
 | Application SQLite             | Immutable proposal, bound approval, accepted intent, attempts and persistent budgets | Transactions define approval/cancellation ordering                            |
 | Three tools                    | Bounded typed inputs, read retries and authorized dispatch                           | No arbitrary network destination, shell or filesystem tool                    |
 | Sandbox HTTP + separate SQLite | Authoritative context, expiry/epoch checks, idempotency transaction and receipt      | Independent effect counts verify named scenarios                              |
-| Model adapter                  | Planning proposals through the same tool surface                                     | Fixture decisions are scripted; live transport remains unvalidated            |
+| Model adapter                  | Planning proposals through the same tool surface                                     | Scripted fixtures; one genuine live smoke passed, broader live behavior unvalidated            |
 | Evaluation                     | Barriers, process death/restart, negative controls and strict reports                | Controlled samples, not production reliability statistics                     |
 
 Source entry points are [`agent/lib/lab/`](../agent/lib/lab/), [`sandbox/`](../sandbox/), [`lab/cli.mjs`](../lab/cli.mjs), [`test/`](../test/) and [`evaluation/`](../evaluation/). The [specification](SPECIFICATION.md) remains the implementation contract; milestone reviews record achieved observations separately.

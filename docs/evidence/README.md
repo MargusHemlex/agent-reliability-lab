@@ -1,10 +1,17 @@
-# History rewrite and evidence provenance
-
-The active history has been cleaned. Original source IDs in immutable reports refer to the privately archived original history; use the [commit map](history-rewrite-commit-map.json) and [cleanup explanation](../HISTORY-CLEANUP.md). Historical CI links require archive access. No old report has been relabelled as a new execution.
-
 # Evidence index
 
-Current implementation evidence is recorded in [milestone 4](../MILESTONE-4-REVIEW.md) and [milestone 5](../MILESTONE-5-REVIEW.md). Canonical fixture/live report schemas are now implemented. Those CI runs did not execute a genuine provider. A later [bounded genuine smoke](../LIVE-SMOKE-REVIEW.md) now has separate live evidence. Historical records below retain their original scope; statements about deferred work describe that earlier stage. The current CI uploads canonical evaluation/live reports and focused walkthrough observations, not all raw spike outputs.
+## Current review path
+
+- [Architecture](../ARCHITECTURE.md) explains the responsibility boundaries; [limitations](../LIMITATIONS.md) states what remains unverified.
+- [Cleaned-repository Linux CI](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39131096180): 79 unit/HTTP tests, 31 fixture scenarios and two negative controls, two walkthrough cases, offline Gateway workflow and runtime regression checks. Reports: [fixture](history-cleanup-ci-fixture.json), [walkthrough](history-cleanup-ci-walkthrough.json), and [live not run](history-cleanup-ci-live-not-run.json). The last report explicitly records that CI made no genuine provider calls.
+- [Genuine model smoke report](live-smoke-2026-10-18.md) and [validation scope](../LIVE-SMOKE-REVIEW.md): one later successful synthetic sample, three calls and one effect. This is separate from the scripted recovery experiments.
+- [Quickstart](../QUICKSTART.md) and [five-minute walkthrough](../FIVE-MINUTE-WALKTHROUGH.md) reproduce the focused experiment without a model key. [Testing](../TESTING.md) explains full-suite and report validation.
+
+Reports describe their recorded source snapshots. Historical results are not relabelled as executions of today's HEAD. JSON Schema checks structure; canonical Zod validation also checks report semantics.
+
+## Historical provenance
+
+The sections below preserve implementation-stage observations. Original source IDs refer to the privately archived original history; use the [commit map](history-rewrite-commit-map.json) and [cleanup explanation](../HISTORY-CLEANUP.md). Original archive CI links require archive access; the cleaned-repository CI above is public. Earlier deferred work and holds describe those earlier stages. Publication of the cleaned repository is now [authorized and complete](../PUBLIC-RELEASE.md).
 
 ## Historical milestone-zero observations
 
@@ -36,7 +43,7 @@ The later overlap/ownership investigation is documented in ../OVERLAP-REVIEW.md 
 
 ## Documentation-stage observations
 
-`milestone-6-linux-fixture.*`, `milestone-6-linux-live-not-run.*` and `milestone-6-linux-walkthrough.*` identify executable-source commit `16b047018a7b2dba286a38146104721c11113af9` from [CI run](https://github.com/MargusHemlex/agent-reliability-lab-private-history-backup-20261018/actions/runs/39123089377). The full fixture report passes all 33 cases; live-provider samples remain unexecuted. The guided observation has its own strict two-case schema and is not a replacement for the full evaluation. Its same-key crash recovery took 20758 ms including restart. See [publication review](../PUBLICATION-REVIEW.md): verification passed but release remains on hold. The historical browser screenshot was renamed from `.png` to `.jpg` to match its unchanged JPEG bytes.
+`milestone-6-linux-fixture.*`, `milestone-6-linux-live-not-run.*` and `milestone-6-linux-walkthrough.*` identify executable-source commit `16b047018a7b2dba286a38146104721c11113af9` from [CI run](https://github.com/MargusHemlex/agent-reliability-lab-private-history-backup-20261018/actions/runs/39123089377). The full fixture report passes all 33 cases; live-provider samples remain unexecuted. The guided observation has its own strict two-case schema and is not a replacement for the full evaluation. Its same-key crash recovery took 20758 ms including restart. See [publication review](../PUBLICATION-REVIEW.md): verification passed while release was still on hold at that stage. The historical browser screenshot was renamed from `.png` to `.jpg` to match its unchanged JPEG bytes.
 
 ## Fresh observations after history cleanup
 

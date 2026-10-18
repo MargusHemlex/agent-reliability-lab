@@ -35,7 +35,7 @@ The rejected case demonstrates the other boundary: a model proposal is not permi
 
 ## 3:15 — Show the wider evidence
 
-Open the [evidence index](evidence/README.md) and [milestone 5 review](MILESTONE-5-REVIEW.md). The previous completed Linux gate records 79 unit/HTTP tests, 31 fixture scenarios and two negative controls. The controls deliberately remove a safety boundary in disposable copies; the same probe must detect an extra effect. An infrastructure exception is not a successful control.
+Open the [evidence index](evidence/README.md). The recorded Linux gate in the cleaned public repository records 79 unit/HTTP tests, 31 fixture scenarios and two negative controls. The controls deliberately remove a safety boundary in disposable copies; the same probe must detect an extra effect. An infrastructure exception is not a successful control.
 
 For a longer review after the presentation:
 
@@ -50,6 +50,6 @@ The first produces strict fixture reports. The second exercises the compiled ada
 
 > This topology is one POSIX host, SQLite and one worker. The twenty-second eve lease is experimental and hash-guarded; the default 860-second setting misses the recovery target. We tested named failures and one-effect outcomes here, not distributed availability or universal exactly-once delivery. The optional real-model adapter has persistent estimated budgets, and one separately documented genuine smoke has passed. This guided crash experiment remains a scripted fixture, not live-model recovery evidence.
 
-The repo remains private pending the owner's release decision. Real integrations, customer data and production deployment are outside this lab. Core desktop operator flows were exercised; native reset-confirmation completion and mobile verification remain open.
+Real integrations, customer data and production deployment are outside this lab. Core desktop operator flows were exercised; native reset-confirmation completion and mobile verification remain open.
 
 For an interactive follow-up, use the [operator instructions](QUICKSTART.md#open-the-local-operator). The focused runner cleans its temporary state, so its disposable runs will not appear in that separate operator instance. Never place credentials in a screenshot or URL.

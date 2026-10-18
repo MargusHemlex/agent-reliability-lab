@@ -4,14 +4,13 @@ An engineering lab for durable agent workflows: exact human approval, crash reco
 
 A synthetic delivery-support agent has three tools: read a delivery, read its resolution policy and record an approved resolution. The worker can die after the sandbox commits but before it receives the result. Recovery must recover that result without creating another effect. Denied actions must create none.
 
-**Public portfolio release, authorized on 2026-10-18. The original history archive remains private.** See the [publication review](docs/PUBLICATION-REVIEW.md) and [verified history cleanup](docs/HISTORY-CLEANUP.md). The optional real-model adapter passed [one bounded genuine live smoke](docs/LIVE-SMOKE-REVIEW.md): three calls, one expected effect and USD 0.000272 estimated cost. Default tests need no model account, API key or paid call.
+## Review in five minutes
 
-## Start here
+1. Read the [architecture](docs/ARCHITECTURE.md): what the framework, application and independent receiver each own.
+2. Follow the [quickstart](docs/QUICKSTART.md), then run the [five-minute walkthrough](docs/FIVE-MINUTE-WALKTHROUGH.md): reject an action, crash an approved worker after commit and verify recovery without a second effect.
+3. Inspect the [evidence index](docs/evidence/README.md) and [limitations](docs/LIMITATIONS.md): measured outcomes, reproducible reports and the boundaries of the claims.
 
-- [Quickstart](docs/QUICKSTART.md): install, verify and open the local operator UI.
-- [Five-minute walkthrough](docs/FIVE-MINUTE-WALKTHROUGH.md): reproduce a worker crash, restart and independently count effects.
-- [Architecture and responsibility boundaries](docs/ARCHITECTURE.md).
-- [Implementation specification](docs/SPECIFICATION.md) and [evidence index](docs/evidence/README.md).
+Default tests need no model account, API key or paid call. The operator UI is available locally through the quickstart.
 
 ## What this project demonstrates
 
@@ -21,7 +20,7 @@ A synthetic delivery-support agent has three tools: read a delivery, read its re
 - Persisted budgets survive restarts. Unknown provider usage blocks another paid call; monetary reservations remain estimates.
 - Strict JSON and Markdown reports record source hashes, denominators, measured effects and unknown measurements explicitly.
 
-The cleaned-history [Linux CI](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39131096180) passed **79 unit/HTTP tests**, **31 fixture scenarios plus two negative controls**, the **two-case guided walkthrough**, an offline compiled Gateway-adapter workflow and runtime regression checks. See the [publication review](docs/PUBLICATION-REVIEW.md) for exact scope, provenance and remaining holds. The offline adapter test simulates provider transport; it establishes no live-model success rate.
+The recorded [Linux CI](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39131096180) passed **79 unit/HTTP tests**, **31 fixture scenarios plus two negative controls**, the **two-case guided walkthrough**, an offline compiled Gateway-adapter workflow and runtime regression checks. See the [evidence index](docs/evidence/README.md) for reports and source provenance. The offline adapter test simulates provider transport; it establishes no live-model success rate. A separate [genuine model smoke](docs/LIVE-SMOKE-REVIEW.md) passed one synthetic happy path: three model calls, one expected effect and USD 0.000272 estimated cost. It does not establish live failure-recovery reliability.
 
 ## Reproduce without a model key
 
@@ -46,13 +45,11 @@ Observed one-effect results cover named scenarios against this receiver contract
 
 The author designed the application authorization transactions, sandbox contract, worker-lock correction, adapter boundaries, operator access controls, budget accounting, failure harness and evidence format, with agent-assisted implementation and review. Framework functionality and model decisions are identified separately in the evidence.
 
-## Further reading
+## Implementation and supporting records
 
-- [Runtime decision](docs/adr/0002-single-worker-runtime-decision.md) and [overlap investigation](docs/OVERLAP-REVIEW.md).
-- [Operator controls and budgets](docs/MILESTONE-3.md).
-- [Failure matrix, negative controls and report validation](docs/MILESTONE-4.md).
-- [Optional Gateway adapter and bounded offline verification](docs/MILESTONE-5.md).
-- [Testing and evidence](docs/TESTING.md), [limitations](docs/LIMITATIONS.md) and [dependency notices](docs/THIRD-PARTY-NOTICES.md).
-- [Security reporting](SECURITY.md), [contributing](CONTRIBUTING.md) and [license](LICENSE).
+- [Implementation specification](docs/SPECIFICATION.md), [testing guide](docs/TESTING.md) and [runtime decision](docs/adr/0002-single-worker-runtime-decision.md).
+- Implementation-stage records: [runtime overlap investigation](docs/OVERLAP-REVIEW.md), [operator controls and budgets](docs/MILESTONE-3.md), [failure matrix and negative controls](docs/MILESTONE-4.md), and [model adapter](docs/MILESTONE-5.md). These preserve the decisions and evidence from each stage; start with the current architecture and evidence index above.
+- [Security reporting](SECURITY.md), [contributing](CONTRIBUTING.md), [dependency notices](docs/THIRD-PARTY-NOTICES.md) and [license](LICENSE).
+- [Publication review](docs/PUBLICATION-REVIEW.md), [release record](docs/PUBLIC-RELEASE.md) and [history provenance](docs/HISTORY-CLEANUP.md).
 
-This repository contains synthetic portfolio code rather than original product implementations. The owner authorized publication of this cleaned portfolio repository only. The original history archive, API credentials, existing products and deployments remain private or unchanged.
+This public repository contains synthetic portfolio code. Credentials and the original history archive remain private. No existing product or deployment is included.
