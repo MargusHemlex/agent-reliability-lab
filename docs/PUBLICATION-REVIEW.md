@@ -10,7 +10,15 @@ Dependency review found exact registry/integrity records and license declaration
 
 ## Four-agent review and verification
 
-Two Codex agents cover documentation/walkthrough and independent history/provenance review. Claude Code and Kimi K3 are requested to review only synthetic project material and publication claims; service failures and snapshot scope must be recorded honestly. Current-stage review outcomes and Linux evidence will be recorded after validation completes.
+The Codex documentation agent passed the guides and focused runner; the independent Codex publication agent passed scoped current-tree hygiene while retaining the historical disclosure hold. Claude Code returned a scoped static PASS conditional on CI, which is now green. Kimi K3 was invoked, but its service returned HTTP 429 with a balance limit and no review verdict. No current-stage Kimi approval is claimed. Only authorized synthetic project material was sent; credentials, local state and the historical confidential identifier were excluded. Three completed reviews do not substitute for the missing fourth review.
+
+Exact-code [Linux CI](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39123089377) passed at commit `16b047018a7b2dba286a38146104721c11113af9`: 79 unit/HTTP tests, documentation targets/command checks, both generated-schema gates, build, the two-case guided walkthrough, offline Gateway workflow, all 33 fixture cases and all four runtime regression stages. Downloaded canonical reports passed semantic/source-freshness validation before this documentation commit. The focused runner validated its own strict two-case schema before export; its downloaded source inventory and assertions were checked separately. Its recovery was 20758 ms including restart, with zero rejected effects and one recovered effect.
+
+- [Guided Linux observation](evidence/milestone-6-linux-walkthrough.json) and [Markdown](evidence/milestone-6-linux-walkthrough.md)
+- [Full fixture evaluation](evidence/milestone-6-linux-fixture.json)
+- [Explicit live-not-run evidence](evidence/milestone-6-linux-live-not-run.json)
+
+A repeated candidate scan covered 126 tracked files, 15 reachable commits and 219 unique blobs at that exact commit. Current-tree private-identifier/key-pattern hits were zero; one historical identifier blob remains. This repeats pattern checks, retaining the independent manual baseline review rather than representing a new exhaustive audit. Newly added ratification evidence is checked separately. The history hold and missing Kimi review remain release prerequisites. Historical evidence validates without `--fresh` after HEAD changes.
 
 English deliverables include README, architecture, quickstart, five-minute walkthrough, threat model, testing guide, security guidance, contributing instructions, license, dependency notices and limitations. Previous milestone documents and source-bound evidence retain their historical claims; newer summaries do not retroactively upgrade them.
 

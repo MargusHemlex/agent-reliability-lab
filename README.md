@@ -21,7 +21,7 @@ A synthetic delivery-support agent has three tools: read a delivery, read its re
 - Persisted budgets survive restarts. Unknown provider usage blocks another paid call; monetary reservations remain estimates.
 - Strict JSON and Markdown reports record source hashes, denominators, measured effects and unknown measurements explicitly.
 
-The last completed milestone passed **79 unit/HTTP tests**, **31 fixture scenarios plus two negative controls**, an offline compiled Gateway-adapter workflow and runtime regression checks on Linux CI. See the [milestone 5 review](docs/MILESTONE-5-REVIEW.md) for its exact commit, run and evidence. The offline adapter test simulates provider transport; it establishes no live-model success rate.
+The current documentation-stage [Linux CI](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39123089377) passed **79 unit/HTTP tests**, **31 fixture scenarios plus two negative controls**, the **two-case guided walkthrough**, an offline compiled Gateway-adapter workflow and runtime regression checks. See the [publication review](docs/PUBLICATION-REVIEW.md) for exact scope, provenance and remaining holds. The offline adapter test simulates provider transport; it establishes no live-model success rate.
 
 ## Reproduce without a model key
 

@@ -36,7 +36,7 @@ npm run reports:validate -- reports/evaluation/REPORT_ID.json
 npm run reports:live-validate -- reports/live/REPORT_ID.json --markdown
 ```
 
-The canonical Zod schemas include semantic gates that generic structural JSON Schema alone cannot enforce. `--fresh` additionally requires the report's exact current source inventory and commit; use it before changing HEAD. Historical committed reports deliberately validate without `--fresh`. A later documentation commit does not retrospectively change the recorded executable commit. Generated reports contain nulls for unknown measurements; fixture requested tokens are not provider usage.
+The canonical Zod schemas include semantic gates that generic structural JSON Schema alone cannot enforce. `--fresh` additionally requires the report's exact current source inventory and commit (the fixture validator also rechecks guarded runtime hashes); use it before changing HEAD. Historical committed reports deliberately validate without `--fresh`. A later documentation commit does not retrospectively change the recorded executable commit. Generated reports contain nulls for unknown measurements; fixture requested tokens are not provider usage.
 
 The two negative controls apply exact mutations to disposable copies and run the same probe against baseline and mutant. A clean baseline must exit 0; the mutant must exit exactly 1 with the expected violation and measured effect increase. Build/process failures do not count as detection. Unknown effects or unrun cases cannot pass.
 
