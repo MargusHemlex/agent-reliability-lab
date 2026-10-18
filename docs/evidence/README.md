@@ -13,3 +13,5 @@ A report's sourceSnapshot captures checked-out source/lock bytes, not a cryptogr
 CI reruns default and experimental cases and uploads fresh observations separately. Its success would mean the expected limitation was reproduced and the explicit experiment passed; the architecture HOLD still applies. CI results on another host are not claimed until observed.
 
 `lease-20-final-observation.json` repeats the twenty-second experiment after final formatting and a fresh build. Its source hashes identify the final executable spike sources; the earlier twenty-second report is retained as a separate historical observation.
+
+`ci-default-observation.json` and `ci-lease-20-observation.json` are separate Linux x64 observations from CI run 39085904262, executable-source commit a5714c76eeea22b37b877566ddaa4faaf4b791df. Both contain checked-out source hashes. Default interrupted recovery misses the watchdog; experimental twenty-second recovery passes. This closes provenance for the newer default observation without altering the older local record.

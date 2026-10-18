@@ -1,0 +1,117 @@
+{
+  "config": {
+    "ownershipLeaseSeconds": 860,
+    "override": false,
+    "status": "Source-observed experimental setting; not a stable documented public API",
+    "acceptanceWindowMs": 30000
+  },
+  "schemaVersion": 1,
+  "framework": {
+    "name": "eve",
+    "version": "0.80.1",
+    "leaseHelperSha256": "747627feb4fc23f0bd998d2f4ca42969b6681380ded6d57fef3dd6fe5ca14903"
+  },
+  "environment": {
+    "node": "v24.21.0",
+    "platform": "linux",
+    "arch": "x64",
+    "localOnly": true,
+    "model": "deterministic-test-model",
+    "inheritedCredentials": false
+  },
+  "cases": [
+    {
+      "name": "approval-survives-process-restart",
+      "status": "PASS",
+      "attempts": [
+        {
+          "phase": "started"
+        },
+        {
+          "phase": "completed"
+        }
+      ],
+      "events": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting",
+        "approval.settled",
+        "input.resolved",
+        "step.started",
+        "action.result",
+        "message.appended",
+        "message.completed",
+        "step.completed",
+        "turn.completed",
+        "session.waiting"
+      ],
+      "lockContenderExitCode": 73,
+      "initialEvents": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting"
+      ],
+      "pendingRequestPersisted": true,
+      "responseBoundary": "waiting",
+      "durationMs": 4588
+    },
+    {
+      "name": "interrupted-tool-recovery",
+      "status": "FAIL",
+      "attempts": [
+        {
+          "phase": "started"
+        }
+      ],
+      "events": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting",
+        "approval.settled",
+        "input.resolved",
+        "step.started"
+      ],
+      "lockContenderExitCode": 73,
+      "initialEvents": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting"
+      ],
+      "pendingRequestPersisted": false,
+      "reason": "interrupted-tool-recovery exceeded 30000ms",
+      "durationMs": 31924
+    }
+  ],
+  "sourceSnapshot": {
+    "agent/agent.ts": "656bbddc7687ca5051d00cecd6d2f381956d7da81933d2f56f44aea545c5e7be",
+    "agent/channels/eve.ts": "72f674ea6d5938f324a6854495b339c380af49762b8a9787e0f83a0a6328207b",
+    "agent/instructions.md": "d4c9585a5878d3c31e6162f8e354feee7dca23f243266057788cb7974f92d7bf",
+    "agent/lib/scripted-model.ts": "7c9984410d6d7a9afd26feaf7aacf7efff42ed4fbc36f62bb44dbaa3e13cb646",
+    "agent/tools/probe.ts": "1f735e83c261643df1d66b7546618042b845b2bf3bc8d7c408130e2f353ec177",
+    "package-lock.json": "4e76b468c6ab8276f2e275a0d78d92c22f2a65ad0e904442c89898d01fb75364",
+    "package.json": "5034f639f7ef401ae19f743b0125bd42a428a2c1a92b25d2bee1227b89372a4d",
+    "spike/locked-start.py": "99f29ad25128881427ddd140be1440e71cddbe3c753f505ee1c4683fdc3fbfd0",
+    "spike/run.mjs": "ae472788797c350b184a4d3e65a64eb432b724436b2a0847508010c8971d3112"
+  },
+  "outcome": "NO_GO"
+}
