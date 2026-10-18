@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { diagnostic, withCleanup } from "./fixture-process.mjs";
+const reportError = (error, phase) => console.error(diagnostic(error, phase));
 import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
@@ -82,78 +84,84 @@ let failure = null,
 try {
   checkpoint("fixture_only", { actualProviderCalls: 0 });
   let f = await fixture();
-  try {
-    const id = await f.create();
-    await f.waiting(id);
-    assert.equal(f.effectCount(), 0);
-    assert.equal((await f.api(`/lab/runs/${id}/reject`, {})).status, 200);
-    assert.equal((await f.inspect(id)).run.intent, null);
-    assert.equal(f.effectCount(), 0);
-    cases[0].observedEffects = 0;
-    cases[0].status = "pass";
-    checkpoint("approval_rejected", { effects: 0 });
-  } finally {
-    await f.stop();
-  }
+  await withCleanup(
+    async () => {
+      const id = await f.create();
+      await f.waiting(id);
+      assert.equal(f.effectCount(), 0);
+      assert.equal((await f.api(`/lab/runs/${id}/reject`, {})).status, 200);
+      assert.equal((await f.inspect(id)).run.intent, null);
+      assert.equal(f.effectCount(), 0);
+      cases[0].observedEffects = 0;
+      cases[0].status = "pass";
+      checkpoint("approval_rejected", { effects: 0 });
+    },
+    () => f.stop(),
+    reportError,
+  );
   index = 1;
   f = await fixture({ after: true });
-  try {
-    const id = await f.create();
-    await f.waiting(id);
-    assert.equal(f.effectCount(), 0);
-    checkpoint("proposal_awaiting_approval", { effects: 0 });
-    await f.approve(id);
-    await until(
-      () => existsSync(join(f.app, "service-barrier", "committed")),
-      "sandbox commit barrier",
-    );
-    const pending = (await f.inspect(id)).run;
-    assert.equal(pending.receipt, null);
-    assert.equal(pending.state, "executing");
-    assert.equal(f.effectCount(), 1);
-    checkpoint("sandbox_committed_before_worker_checkpoint", {
-      effects: 1,
-      workerReceipt: null,
-    });
-    await f.killWorker();
-    await writeFile(join(f.app, "service-barrier", "release"), "release");
-    const started = Date.now();
-    checkpoint("worker_killed_restarting");
-    await f.restart();
-    const done = await until(
-      async () => {
-        const { run } = await f.inspect(id);
-        return run.state === "succeeded" && run;
-      },
-      "receipt recovery",
-      30000,
-    );
-    const recoveryMs = Date.now() - started;
-    assert.ok(recoveryMs <= 30000);
-    assert.equal(done.intent.key, pending.intent.key);
-    assert.ok(done.receipt);
-    assert.equal(f.effectCount(), 1);
-    Object.assign(cases[1], {
-      status: "pass",
-      observedEffects: 1,
-      recoveryMs,
-      keyPreserved: true,
-    });
-    checkpoint("reconciled_one_effect", {
-      effects: 1,
-      recoveryMs,
-      keyPreserved: true,
-    });
-  } finally {
-    await f.stop();
-  }
-} catch {
+  await withCleanup(
+    async () => {
+      const id = await f.create();
+      await f.waiting(id);
+      assert.equal(f.effectCount(), 0);
+      checkpoint("proposal_awaiting_approval", { effects: 0 });
+      await f.approve(id);
+      await until(
+        () => existsSync(join(f.app, "service-barrier", "committed")),
+        "sandbox commit barrier",
+      );
+      const pending = (await f.inspect(id)).run;
+      assert.equal(pending.receipt, null);
+      assert.equal(pending.state, "executing");
+      assert.equal(f.effectCount(), 1);
+      checkpoint("sandbox_committed_before_worker_checkpoint", {
+        effects: 1,
+        workerReceipt: null,
+      });
+      await f.killWorker();
+      await writeFile(join(f.app, "service-barrier", "release"), "release");
+      const started = Date.now();
+      checkpoint("worker_killed_restarting");
+      await f.restart();
+      const done = await until(
+        async () => {
+          const { run } = await f.inspect(id);
+          return run.state === "succeeded" && run;
+        },
+        "receipt recovery",
+        30000,
+      );
+      const recoveryMs = Date.now() - started;
+      assert.ok(recoveryMs <= 30000);
+      assert.equal(done.intent.key, pending.intent.key);
+      assert.ok(done.receipt);
+      assert.equal(f.effectCount(), 1);
+      Object.assign(cases[1], {
+        status: "pass",
+        observedEffects: 1,
+        recoveryMs,
+        keyPreserved: true,
+      });
+      checkpoint("reconciled_one_effect", {
+        effects: 1,
+        recoveryMs,
+        keyPreserved: true,
+      });
+    },
+    () => f.stop(),
+    reportError,
+  );
+} catch (error) {
+  reportError(error, cases[index].id);
   failure = "scenario_failed";
   cases[index].status = "fail";
 } finally {
   try {
     await cleanup();
-  } catch {
+  } catch (error) {
+    reportError(error, "global_cleanup");
     failure = "scenario_failed";
   }
 }

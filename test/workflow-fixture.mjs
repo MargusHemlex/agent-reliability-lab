@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { Client } from "eve/client";
-import { spawn } from "node:child_process";
+import {
+  launch as launchProcess,
+  runtimeEnvironment,
+  FixtureProcessError,
+} from "./fixture-process.mjs";
 import { createHash, randomBytes } from "node:crypto";
 import { createServer } from "node:net";
 import { DatabaseSync } from "node:sqlite";
@@ -61,6 +65,7 @@ export async function until(fn, label, timeout = 30000) {
       const result = await fn();
       if (result) return result;
     } catch (error) {
+      if (error instanceof FixtureProcessError) throw error;
       last = error;
     }
     await sleep(50);
@@ -83,6 +88,10 @@ async function kill(child) {
     child.exitCode !== null || child.signalCode !== null
       ? Promise.resolve()
       : new Promise((r) => child.once("exit", r));
+  if (!child.pid) {
+    children.delete(child);
+    return;
+  }
   try {
     process.kill(-child.pid, "SIGKILL");
   } catch (e) {
@@ -92,20 +101,15 @@ async function kill(child) {
   children.delete(child);
 }
 function launch(command, args, cwd, env) {
-  const child = spawn(command, args, {
+  const handle = launchProcess(
+    command,
+    args,
     cwd,
     env,
-    detached: true,
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-  children.add(child);
-  let logs = "";
-  for (const s of [child.stdout, child.stderr])
-    s.on("data", (chunk) => {
-      logs = (logs + chunk).slice(-16000);
-    });
-  child.on("error", () => {});
-  return { child, logs: () => logs };
+    command === "/usr/bin/python3" ? "worker startup" : "sandbox startup",
+  );
+  children.add(handle.child);
+  return handle;
 }
 export async function fixture({
   before = false,
@@ -165,6 +169,7 @@ export async function fixture({
   const secret = randomBytes(32).toString("hex"),
     operator = randomBytes(32).toString("hex");
   const env = {
+    ...runtimeEnvironment(),
     PATH: `${dirname(process.execPath)}:/usr/bin:/bin`,
     HOME: join(app, "home"),
     TMPDIR: app,
@@ -213,7 +218,7 @@ export async function fixture({
     env.ARL_LIVE_MAX_COST_USD = String(liveConfig.maxCostMicrousd / 1000000);
   }
   await until(async () => {
-    if (server.child.exitCode !== null) throw new Error("sandbox exited");
+    server.assertRunning();
     const r = await fetch(`${env.ARL_SERVICE_URL}/receipts/${"0".repeat(64)}`, {
       headers: { authorization: `Bearer ${secret}` },
       signal: AbortSignal.timeout(500),
@@ -243,7 +248,7 @@ export async function fixture({
       env,
     );
     await until(async () => {
-      if (worker.child.exitCode !== null) throw new Error("worker exited");
+      worker.assertRunning();
       return (await api("/lab/runs")).status === 200;
     }, "worker readiness");
   };
@@ -286,7 +291,7 @@ export async function fixture({
   let evidenceCaptured = false;
   return {
     app,
-    debugLogs: () => (offlineGateway ? worker.logs() : ""),
+
     env,
     host,
     operator,

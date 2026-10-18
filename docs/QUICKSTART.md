@@ -82,3 +82,9 @@ Default mode is fixture. The adapter passed [one bounded genuine smoke](LIVE-SMO
 - Runtime hash guard failure: restore the pinned lockfile installation; a dependency upgrade requires renewed compatibility review.
 - A plain `npm run spike` exits 1: this intentionally reproduces the default lease limitation. The accepted experiment is `npm run spike -- --lease-seconds=20`; see the runtime ADR.
 - A report is `fail` or `not_run`: inspect its reason and measured sample count. Do not relabel it as passing or substitute zeros for missing observations.
+
+## Fixture startup diagnostics
+
+Standalone Node 24 is the supported runtime. Fixture subprocesses use an isolated environment: only the explicit `ELECTRON_RUN_AS_NODE=1` bootstrap flag is forwarded from the parent, for wrappers that require it. This preserves runtime mode but does not certify Electron compatibility with Node 24 APIs. Parent API keys, `NODE_OPTIONS` and live opt-in are not inherited.
+
+On walkthrough failure, stderr identifies the scenario or startup phase and, where available, the child exit code, signal or safe spawn error code. Check the Node version, Python path, build and runtime guards. Diagnostics intentionally exclude arbitrary exception text, stacks and child output because these can contain credentials or payloads. The JSON/Markdown report retains its existing failure semantics. Cleanup failures are reported separately and do not replace the original scenario error.
