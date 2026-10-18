@@ -1,3 +1,4 @@
+import { assertRuntimeCompatibility } from "./runtime-compatibility.mjs";
 import { Client } from "eve/client";
 import { spawn } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
@@ -55,9 +56,11 @@ const report = {
   },
   cases: [],
 };
+report.runtimeCompatibility = await assertRuntimeCompatibility(root);
 const sourceFiles = [
   "package.json",
   "package-lock.json",
+  "spike/runtime-compatibility.mjs",
   "spike/run.mjs",
   "spike/locked-start.py",
 ];

@@ -34,6 +34,10 @@ jobs:
         run: |
           npm run spike -- --lease-seconds=20
           cp spike-results/latest.json spike-results/experimental-20.json
+      - name: Live step and authentic callback overlap
+        run: npm run spike:overlap -- --lease-seconds=20
+      - name: Actual worker owns its process lock
+        run: npm run spike:ownership
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "experiment": "launcher-only-death",
+  "leaseSeconds": 20,
+  "frameworkVersion": "0.80.1",
+  "mode": "fixture",
+  "cases": [],
+  "sourceSnapshot": {
+    "agent/tools/probe.ts": "ee3fcaf5a0e8690098bf06d1fcb3e6f25b5657d22fb7f8334f511dc59e8928dc",
+    "spike/locked-start.py": "99f29ad25128881427ddd140be1440e71cddbe3c753f505ee1c4683fdc3fbfd0",
+    "spike/ownership.mjs": "e4f6e38660af2b52fb1069303c6dee95f88cf089a412925e430571810d7a2bcd",
+    "package-lock.json": "4e76b468c6ab8276f2e275a0d78d92c22f2a65ad0e904442c89898d01fb75364"
+  },
+  "workerWasLauncher": false,
+  "originalWorkerAliveAfterLauncherDeath": true,
+  "secondStartAccepted": true,
+  "oldWorkerStillAliveAtSecondInvocation": true,
+  "secondInvocationWhileOriginalBlocked": true,
+  "attempts": [
+    {
+      "phase": "started",
+      "invocationId": "5fadb15d-c8fd-469d-a312-188f835573c0",
+      "pid": 28922,
+      "monotonicNs": "1337078468912291"
+    },
+    {
+      "phase": "started",
+      "invocationId": "08b81f15-5fc2-4e76-8ef4-15c3de112fbd",
+      "pid": 28929,
+      "monotonicNs": "1337098644701083"
+    },
+    {
+      "phase": "completed",
+      "invocationId": "08b81f15-5fc2-4e76-8ef4-15c3de112fbd",
+      "pid": 28929,
+      "monotonicNs": "1337098696547666"
+    },
+    {
+      "phase": "completed",
+      "invocationId": "5fadb15d-c8fd-469d-a312-188f835573c0",
+      "pid": 28922,
+      "monotonicNs": "1337098697759916"
+    }
+  ],
+  "outcome": "UNSAFE_LAUNCHER_LOCK",
+  "limits": "Single-host lock lifetime only; not a distributed lease or transactional effect test"
+}

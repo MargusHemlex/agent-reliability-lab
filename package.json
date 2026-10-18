@@ -24,6 +24,8 @@
     "spike": "node spike/run.mjs",
     "test": "node --test spike/model.test.mjs",
     "format": "prettier --check agent spike/*.mjs package.json tsconfig.json",
-    "format:write": "prettier --write agent spike/*.mjs package.json tsconfig.json"
+    "format:write": "prettier --write agent spike/*.mjs package.json tsconfig.json",
+    "spike:overlap": "node spike/overlap.mjs",
+    "spike:ownership": "node spike/ownership.mjs"
   }
 }
