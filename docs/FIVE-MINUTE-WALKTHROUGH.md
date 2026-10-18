@@ -25,7 +25,7 @@ Read the emitted checkpoints in order:
 3. The worker is terminated and restarted.
 4. Recovery resolves the receipt with the same effect key, still **one** effect, within the thirty-second recovery target.
 
-The command exits nonzero if an assertion or infrastructure step fails. Its immutable UUID-named files under `reports/walkthrough/` record the actual observation. The runner validates its own strict two-case schema before exporting JSON and Markdown; this is separate from the full evaluation schema. These files include the actual source commit and hashes; do not substitute recorded timings for a failed local run. Allow time for the experimental twenty-second lease to expire. Timing varies by machine.
+The command exits nonzero if an assertion or infrastructure step fails. Its immutable UUID-named files under `reports/walkthrough/` record the actual observation. The runner validates its own strict two-case schema before exporting JSON and Markdown; this is separate from the full evaluation schema. These files include the actual source commit and hashes; do not substitute recorded timings for a failed local run. Allow time for the experimental twenty-second lease to expire. Timing varies by machine. The recovery clock starts immediately before restart, after worker termination and barrier release; it excludes that kill/release setup and is not total time since the service commit.
 
 ## 2:15 — Explain why recovery is safe here
 

@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-18",
+  "reviewer": "Kimi K3 via Kimi Code CLI",
+  "requestedModel": "moonshot-ai/kimi-k3",
+  "returnedModelVersion": null,
+  "snapshotCommit": "69e4953459f586379e25585d8359792df28182ed",
+  "snapshotFiles": {
+    "README.md": "b80d79805b8cfebba0c774e8b90b84b6621f65b43570c505405de7723f9685a2",
+    "SECURITY.md": "42a08182c41b4d0b6a9abc5079223c20b5f25a60708a1a015329dc45f569b573",
+    "CONTRIBUTING.md": "7c933b43c14ac8d98fec90f073e1a394d1734a985373853015706f098a5d333c",
+    "docs/QUICKSTART.md": "d6674c313c9a302b6813867aa62b6d4db30f7e8e3692c0da85421cbb0afe059c",
+    "docs/FIVE-MINUTE-WALKTHROUGH.md": "84c2ab900da040c6e23d28362b17f8538da258e1947e667eea37f5a4a6c124d0",
+    "docs/ARCHITECTURE.md": "2aa96c32e4bb42970aa82e9497d766312b4c03ecd12a52f6776f969a7d5a163e",
+    "docs/THREAT-MODEL.md": "dd3044499f238e9fc9351b84412636e4e1329ab0bfbdd6330a2ecbbdd11e1227",
+    "docs/TESTING.md": "cb7d4ba348399adae05bec412f8d5a7f6ba89b87255fe836b0f7df113a9bce13",
+    "docs/LIMITATIONS.md": "50158bb9a86c67643ed588e098e72d2257b7ced18a599fd8d681543034396901",
+    "docs/THIRD-PARTY-NOTICES.md": "74d96ab0d2dd49bbf10a547b1fd8a665bef0d35ca4985c1d5c2079dc01a18b80",
+    "docs/PUBLICATION-REVIEW.md": "6aa4b13ffe396d01384092dc9f61e203db563b4a24112f51c0ef080fbd0e6b06",
+    "test/walkthrough.mjs": "c5f7287519a68be3eb7280904a02eed3d155fdafa5c2bee182c1ea39e8c328dc",
+    "test/docs-check.mjs": "f4c58ecabf8041569446c8347c8c479023aed5dea6ca5888287048a1616f9cad",
+    ".github/workflows/spike.yml": "cfc6cf8d8f691bca3dd7162a91e01c295a84fb34d3d88316f7ed8e47b858f879",
+    "package.json": "aa46ba73e2e3cbcddf3cc33872111510fcceb788b583287d8dbc1659ff2cc80d"
+  },
+  "promptSha256": "cc4ec018eb6575a8ca1fe99248439e1854b45b35a8cd71aa250234cf5bc831c5",
+  "responseSha256": "128b115d3fd3b797ce958d3892e2d840e56332d9c582e40948c393f78be9de0f",
+  "processExitCode": 0,
+  "verdict": "scoped_pass",
+  "publication": "HOLD",
+  "method": "Static review of supplied synthetic documentation/source and sanitized CI summaries; no independent execution",
+  "remainingReleasePrerequisites": [
+    "Resolve historical confidential identifier with reviewed history plan or explicit owner resolution",
+    "Separate explicit owner publication decision"
+  ],
+  "applicationLiveProviderValidation": "not_run"
+}

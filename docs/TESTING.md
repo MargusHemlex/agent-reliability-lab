@@ -38,6 +38,10 @@ npm run reports:live-validate -- reports/live/REPORT_ID.json --markdown
 
 The canonical Zod schemas include semantic gates that generic structural JSON Schema alone cannot enforce. `--fresh` additionally requires the report's exact current source inventory and commit (the fixture validator also rechecks guarded runtime hashes); use it before changing HEAD. Historical committed reports deliberately validate without `--fresh`. A later documentation commit does not retrospectively change the recorded executable commit. Generated reports contain nulls for unknown measurements; fixture requested tokens are not provider usage.
 
+The aggregate entry point `test/evaluate.mjs` runs `test/negative-controls.mjs` for the two negative controls. The `test:negative` and `test:adverse` scripts are standalone subsets, not additional cases beyond the 33.
+
 The two negative controls apply exact mutations to disposable copies and run the same probe against baseline and mutant. A clean baseline must exit 0; the mutant must exit exactly 1 with the expected violation and measured effect increase. Build/process failures do not count as detection. Unknown effects or unrun cases cannot pass.
 
 Primary crash recovery is measured including restart and must stay within 30 seconds. Latency boundaries vary between harnesses. Each case is a finite sample, not a production reliability estimate. Read [evidence history](evidence/README.md), [milestone 5 review](MILESTONE-5-REVIEW.md) and [publication review](PUBLICATION-REVIEW.md) for scope and remaining holds.
+
+The guided walkthrough recovery clock starts after the worker is killed and the committed-service barrier is released, immediately before restart. It measures restart and receipt reconciliation, not the entire commit-to-recovery interval. Current runtime-gate step results are retained in CI logs; their raw `spike-results` files are not uploaded by the current artifact allowlist. Historical sanitized runtime observations remain committed separately.
