@@ -116,7 +116,22 @@ export async function fixture({
   deliveryDescription,
   fixtureToolName,
   sourceRoot = root,
+  liveConfig,
+  offlineGateway = false,
 } = {}) {
+  if (
+    liveConfig &&
+    (before ||
+      after ||
+      clock ||
+      readFailures !== undefined ||
+      readDelayMs !== undefined ||
+      deliveryDescription !== undefined ||
+      fixtureToolName !== undefined)
+  )
+    throw new Error("live_fault_hooks_denied");
+  if (offlineGateway && !liveConfig)
+    throw new Error("offline_gateway_requires_live_adapter");
   const app = await mkdtemp(
     join(process.env.TMPDIR ?? "/tmp", "arl-workflow-"),
   );
@@ -182,6 +197,21 @@ export async function fixture({
     ...(after ? { ARL_SERVICE_BARRIER_DIR: join(app, "service-barrier") } : {}),
   };
   const server = launch(process.execPath, ["sandbox/server.ts"], app, env);
+  if (liveConfig) {
+    delete env.ARL_TEST_MODE;
+    if (offlineGateway) {
+      await cp(
+        join(root, "test/live-transport-preload.mjs"),
+        join(app, "offline-gateway.mjs"),
+      );
+      env.NODE_OPTIONS = `--import=${join(app, "offline-gateway.mjs")}`;
+    }
+    env.ARL_LAB_MODE = "live";
+    env.ARL_LIVE_OPT_IN = "1";
+    env.AI_GATEWAY_API_KEY = liveConfig.apiKey;
+    env.AGENT_MODEL = liveConfig.modelId;
+    env.ARL_LIVE_MAX_COST_USD = String(liveConfig.maxCostMicrousd / 1000000);
+  }
   await until(async () => {
     if (server.child.exitCode !== null) throw new Error("sandbox exited");
     const r = await fetch(`${env.ARL_SERVICE_URL}/receipts/${"0".repeat(64)}`, {
@@ -256,6 +286,7 @@ export async function fixture({
   let evidenceCaptured = false;
   return {
     app,
+    debugLogs: () => (offlineGateway ? worker.logs() : ""),
     env,
     host,
     operator,

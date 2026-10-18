@@ -5,6 +5,7 @@ import { createOperatorHandler } from "../lib/lab/operator-ui.ts";
 const origin = () =>
   `http://127.0.0.1:${process.env.NITRO_PORT ?? process.env.PORT ?? "4318"}`;
 const handler = createOperatorHandler({
+  mode: () => config().mode,
   secret: () => config().operatorSecret,
   origin,
   proxy: (path, method, body) =>

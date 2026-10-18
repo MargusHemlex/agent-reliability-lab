@@ -3,10 +3,10 @@ import { AppStore } from "../agent/lib/lab/store.ts";
 import { config } from "../agent/lib/lab/runtime.ts";
 await assertRuntimeCompatibility(process.cwd());
 if (
-  process.env.ARL_LAB_MODE !== "fixture" ||
+  !["fixture", "live"].includes(process.env.ARL_LAB_MODE) ||
   process.env.WORKFLOW_INLINE_OWNERSHIP_LEASE_SECONDS !== "20"
 )
-  throw new Error("Guarded fixture runtime configuration required");
+  throw new Error("Guarded lab runtime configuration required");
 if (
   process.env.ARL_TEST_MODE !== "1" &&
   Object.keys(process.env).some((key) =>

@@ -20,8 +20,13 @@ jobs:
       - run: npm run typecheck
       - run: npm run format
       - run: npm test
+      - run: npm run reports:live-schema
       - run: npm run reports:schema
       - run: npm run build
+      - name: Offline Gateway adapter through the compiled workflow
+        run: npm run test:live-workflow
+      - name: Explicitly unexecuted live-provider evidence
+        run: ARL_LAB_MODE=fixture ARL_LIVE_OPT_IN=0 npm run evaluate:live
       - name: Complete fixture evaluation and schema-validated reports
         run: npm run evaluate
       - name: Reproduce default-runtime limitation
@@ -49,4 +54,6 @@ jobs:
           path: |
             reports/evaluation/*.json
             reports/evaluation/*.md
+            reports/live/*.json
+            reports/live/*.md
           retention-days: 7

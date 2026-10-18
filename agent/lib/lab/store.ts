@@ -30,7 +30,14 @@ type Approval = {
   consumed: boolean;
   decidedAt: number;
 };
+export type LivePolicy = {
+  requestedModelId: string;
+  maxCostMicrousd: number;
+  priceTableDate: string;
+};
 export type Run = {
+  sourceMode: "fixture" | "live_pending" | "live";
+  live: LivePolicy | null;
   runId: string;
   namespace: string;
   deliveryId: string;
@@ -57,7 +64,8 @@ export class AppStore {
   private db: DatabaseSync;
   constructor(dbPath: string) {
     this.db = new DatabaseSync(dbPath);
-    this.db.exec(`PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;
+    this.db
+      .exec(`PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA busy_timeout=5000;
       CREATE TABLE IF NOT EXISTS ownership (id INTEGER PRIMARY KEY CHECK(id=1), epoch INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, revision INTEGER NOT NULL, data TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY, run_id TEXT NOT NULL, at INTEGER NOT NULL, kind TEXT NOT NULL, data TEXT NOT NULL);`);
@@ -106,6 +114,8 @@ export class AppStore {
       .get(runId) as { data: string } | undefined;
     if (!row) throw new Error("run not found");
     const run = JSON.parse(row.data) as Run;
+    run.sourceMode ??= "fixture";
+    run.live ??= null;
     run.namespace ??= "default";
     run.limits ??= { ...DEFAULT_LIMITS };
     run.budget ??= emptyBudget();
@@ -172,12 +182,15 @@ export class AppStore {
     epoch: number;
     now: number;
     limits?: Partial<Limits>;
+    mode?: "fixture" | "live";
     namespace?: string;
   }) {
     return this.tx(() => {
       this.owner(input.epoch);
       const limits = validateLimits(input.limits);
       const run: Run = {
+        sourceMode: input.mode === "live" ? "live_pending" : "fixture",
+        live: null,
         runId: input.runId,
         namespace: input.namespace ?? "default",
         deliveryId: input.deliveryId,
@@ -283,7 +296,15 @@ export class AppStore {
   }
   reserveModel(
     runId: string,
-    input: { id: string; requestedTokens: number; now: number; epoch: number },
+    input: {
+      id: string;
+      requestedTokens: number;
+      now: number;
+      epoch: number;
+      singleDispatch?: boolean;
+      reservedCostMicrousd?: number;
+      live?: LivePolicy;
+    },
   ) {
     const result = this.change(
       runId,
@@ -295,6 +316,55 @@ export class AppStore {
           ["__proto__", "constructor", "prototype"].includes(input.id)
         )
           throw new Error("invalid reservation identity");
+        if (input.singleDispatch || input.live) {
+          if (
+            !input.singleDispatch ||
+            !input.live ||
+            run.sourceMode === "fixture"
+          )
+            throw new Error("live_mode_binding_denied");
+          const policy = input.live;
+          if (
+            !/^[a-z0-9.-]+\/[A-Za-z0-9._-]+$/.test(policy.requestedModelId) ||
+            !/^\d{4}-\d{2}-\d{2}$/.test(policy.priceTableDate) ||
+            !Number.isSafeInteger(policy.maxCostMicrousd) ||
+            policy.maxCostMicrousd < 1 ||
+            policy.maxCostMicrousd > 100000 ||
+            !Number.isSafeInteger(input.reservedCostMicrousd) ||
+            input.reservedCostMicrousd! < 1
+          )
+            throw new Error("invalid_live_policy");
+          if (run.live && stable(run.live) !== stable(policy))
+            throw new Error("live_policy_conflict");
+          if (run.budget.models[input.id])
+            throw new Error("model_dispatch_replay");
+          const prior = Object.values(run.budget.models);
+          if (
+            prior.some(
+              (item) =>
+                item.finishedAt === null ||
+                item.inputTokens == null ||
+                item.outputTokens == null ||
+                item.estimatedCostMicrousd == null,
+            )
+          )
+            throw new Error("live_usage_unknown");
+          const charged = prior.reduce(
+            (sum, item) =>
+              sum +
+              Math.max(
+                item.reservedCostMicrousd ?? 0,
+                item.estimatedCostMicrousd ?? 0,
+              ),
+            0,
+          );
+          if (charged + input.reservedCostMicrousd! > policy.maxCostMicrousd) {
+            this.permit(run, input.now, "live_cost_budget");
+            return null;
+          }
+          run.live = { ...policy };
+        } else if (run.sourceMode !== "fixture")
+          throw new Error("live_mode_binding_denied");
         const hash = digest({ requestedTokens: input.requestedTokens });
         const old = run.budget.models[input.id];
         if (old) {
@@ -330,6 +400,12 @@ export class AppStore {
           finishedAt: null,
           outcome: null,
           requestedTokens: input.requestedTokens,
+          ...(input.live
+            ? {
+                reservedCostMicrousd: input.reservedCostMicrousd,
+                estimatedCostMicrousd: null,
+              }
+            : {}),
           inputTokens: null,
           outputTokens: null,
         };
@@ -350,6 +426,10 @@ export class AppStore {
       inputTokens?: number | null;
       outputTokens?: number | null;
       outcome?: string;
+      estimatedCostMicrousd?: number | null;
+      provider?: string | null;
+      returnedModelId?: string | null;
+      providerVersion?: string | null;
     },
   ) {
     return this.change(
@@ -363,6 +443,26 @@ export class AppStore {
         for (const value of [input.inputTokens, input.outputTokens])
           if (value != null && (!Number.isSafeInteger(value) || value < 0))
             throw new Error("invalid model usage");
+        if (
+          input.estimatedCostMicrousd != null &&
+          (!Number.isSafeInteger(input.estimatedCostMicrousd) ||
+            input.estimatedCostMicrousd < 0)
+        )
+          throw new Error("invalid_model_cost");
+        for (const value of [
+          input.provider,
+          input.returnedModelId,
+          input.providerVersion,
+        ])
+          if (value != null && !/^[A-Za-z0-9_./:-]{1,160}$/.test(value))
+            throw new Error("invalid_model_metadata");
+        if (run.live) {
+          item.estimatedCostMicrousd = input.estimatedCostMicrousd ?? null;
+          item.provider = input.provider ?? null;
+          item.returnedModelId = input.returnedModelId ?? null;
+          item.providerVersion = input.providerVersion ?? null;
+          if (input.outcome === "completed") run.sourceMode = "live";
+        }
         this.tick(run, input.now);
         item.finishedAt = input.now;
         item.outcome = input.outcome ?? "completed";

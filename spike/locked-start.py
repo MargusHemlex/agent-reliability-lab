@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 import sys
 
-lab_mode = os.environ.get('ARL_LAB_MODE') == 'fixture'
+lab_mode = os.environ.get('ARL_LAB_MODE') in ('fixture', 'live')
 if not lab_mode and os.environ.get('ARL_SPIKE_TEST') != '1':
     sys.exit('Explicit ARL_SPIKE_TEST=1 required')
 if not lab_mode and not os.environ.get('ARL_SPIKE_SECRET'):

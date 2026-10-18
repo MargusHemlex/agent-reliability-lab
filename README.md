@@ -2,11 +2,11 @@
 
 A public-by-design engineering laboratory for durable agent execution, human approval and reproducible failure testing.
 
-**Status: milestone 4 failure evaluation implemented: 56 unit/HTTP tests and 33 evaluation cases pass locally and on Linux CI. Exact-code Linux validation is recorded in the milestone review. Repository remains private.**
+**Status: milestone 5 optional Gateway adapter and bounded offline verification implemented. Real provider validation is not run. Repository remains private.**
 
 One synthetic delayed-delivery workflow reads delivery status, reads a versioned policy and records an approved resolution through exactly three tools. The worker, application database, separate sandbox HTTP service and effect database are real. Model decisions are scripted fixture decisions; no live model is called.
 
-Start with the [failure evaluation guide](docs/MILESTONE-4.md) and [four-agent review](docs/MILESTONE-4-REVIEW.md). The [operator UI and budget walkthrough](docs/MILESTONE-3.md) and [budget/access-control ADR](docs/adr/0003-execution-budgets.md) describe the previous stage. The [milestone review](docs/MILESTONE-3-REVIEW.md) records browser evidence and the remaining native reset-confirmation UI check. The prior [milestone 2 architecture](docs/MILESTONE-2.md) and [review](docs/MILESTONE-2-REVIEW.md) remain historical evidence.
+Start with the [optional live-adapter guide](docs/MILESTONE-5.md) and its [four-agent review](docs/MILESTONE-5-REVIEW.md), including the explicit offline/live boundary. The [failure evaluation guide](docs/MILESTONE-4.md) and [four-agent review](docs/MILESTONE-4-REVIEW.md). The [operator UI and budget walkthrough](docs/MILESTONE-3.md) and [budget/access-control ADR](docs/adr/0003-execution-budgets.md) describe the previous stage. The [milestone review](docs/MILESTONE-3-REVIEW.md) records browser evidence and the remaining native reset-confirmation UI check. The prior [milestone 2 architecture](docs/MILESTONE-2.md) and [review](docs/MILESTONE-2-REVIEW.md) remain historical evidence.
 
 ## Runtime decision
 
@@ -73,7 +73,7 @@ This process harness exercises real worker termination/restart against the indep
 
 Implemented application code owns immutable proposals, single-use bound approval, transactional dispatch intent, stable effect keys, receipt reconciliation and sandbox fencing. Eve owns execution claiming, checkpoint replay and orchestration. Receiver-side idempotency gives one effect in specifically tested scenarios; it does not establish universal exactly-once delivery.
 
-The operator UI and durable fixture budget/retry accounting are implemented. The failure matrix, negative controls and schema-validated evaluation exports are implemented. Optional live provider accounting and final publication review remain later milestones. This implementation is not a completed release of the full specification. A caller timeout never proves that an action stopped.
+The operator UI and durable fixture budget/retry accounting are implemented. The failure matrix, negative controls and schema-validated evaluation exports are implemented. An opt-in Gateway adapter, persisted usage/cost reservations and separate live reports are implemented. Genuine provider validation and final publication review remain outstanding. This implementation is not a completed release of the full specification. A caller timeout never proves that an action stopped.
 
 No horizontal scaling, real integrations, customer data, live-model validation or production deployment is claimed. Runtime upgrades and topology changes reopen the compatibility decision and must rerun the gates.
 

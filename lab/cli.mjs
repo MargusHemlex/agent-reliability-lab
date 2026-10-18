@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { liveConfiguration } from "../agent/lib/live-model.ts";
 import { randomBytes } from "node:crypto";
 import { spawn } from "node:child_process";
 import { chmod, mkdir, readFile, writeFile } from "node:fs/promises";
@@ -53,13 +54,24 @@ async function serve(cfg) {
   if (!existsSync(join(root, ".output/server/index.mjs")))
     throw new Error("Build first: npm run build");
   await mkdir(join(state, "home"), { recursive: true, mode: 0o700 });
+  const mode = process.env.ARL_LAB_MODE ?? "fixture";
+  if (!["fixture", "live"].includes(mode)) throw new Error("invalid_lab_mode");
+  const live = mode === "live" ? liveConfiguration() : null;
   const env = {
     PATH: `${dirname(process.execPath)}:/usr/bin:/bin`,
     HOME: join(state, "home"),
     TMPDIR: state,
     NODE_ENV: "production",
     EVE_TELEMETRY_DISABLED: "1",
-    ARL_LAB_MODE: "fixture",
+    ARL_LAB_MODE: mode,
+    ...(live
+      ? {
+          ARL_LIVE_OPT_IN: "1",
+          AI_GATEWAY_API_KEY: live.apiKey,
+          AGENT_MODEL: live.modelId,
+          ARL_LIVE_MAX_COST_USD: String(live.maxCostMicrousd / 1000000),
+        }
+      : {}),
     ARL_LAB_DB: join(state, "application.sqlite"),
     ARL_SANDBOX_DB: join(state, "sandbox.sqlite"),
     ARL_SANDBOX_PORT: String(cfg.servicePort),
@@ -75,7 +87,9 @@ async function serve(cfg) {
       cwd: root,
       env,
       detached: true,
-      stdio: ["ignore", "inherit", "inherit"],
+      stdio: live
+        ? ["ignore", "ignore", "ignore"]
+        : ["ignore", "inherit", "inherit"],
     });
     children.push(child);
     return child;
@@ -93,7 +107,11 @@ async function serve(cfg) {
   process.once("SIGINT", stop);
   process.once("SIGTERM", stop);
   try {
+    // The sandbox never receives provider credentials.
+    const providerKey = env.AI_GATEWAY_API_KEY;
+    delete env.AI_GATEWAY_API_KEY;
     const service = start(process.execPath, ["sandbox/server.ts"]);
+    if (providerKey) env.AI_GATEWAY_API_KEY = providerKey;
     const deadline = Date.now() + 10000;
     while (true) {
       if (service.exitCode !== null)
@@ -117,8 +135,8 @@ async function serve(cfg) {
       String(cfg.workerPort),
     ]);
     print({
-      event: "fixture_lab_starting",
-      mode: "fixture",
+      event: "lab_starting",
+      mode: live ? "live_pending" : "fixture",
       worker: `http://127.0.0.1:${cfg.workerPort}`,
       operator: `http://127.0.0.1:${cfg.workerPort}/operator`,
       service: `http://127.0.0.1:${cfg.servicePort}`,
@@ -219,7 +237,7 @@ try {
         "resume RUN_ID",
       ],
       mode: "fixture",
-      liveMode: "not implemented",
+      liveMode: "explicit environment opt-in; see docs/MILESTONE-5.md",
     });
 } catch (error) {
   console.error(

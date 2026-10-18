@@ -37,6 +37,11 @@ export type Reservation = {
   toolName?: string;
   logicalId?: string;
   requestedTokens?: number;
+  reservedCostMicrousd?: number;
+  estimatedCostMicrousd?: number | null;
+  provider?: string | null;
+  returnedModelId?: string | null;
+  providerVersion?: string | null;
   inputTokens?: number | null;
   outputTokens?: number | null;
   reconciliation?: boolean;

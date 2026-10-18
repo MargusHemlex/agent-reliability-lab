@@ -1,0 +1,444 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": { "type": "number", "const": 1 },
+    "mode": { "type": "string", "const": "live" },
+    "reportId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+    },
+    "overall": { "type": "string", "enum": ["pass", "fail", "not_run"] },
+    "execution": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["completed", "failed", "not_run"]
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "missing_credentials",
+                "missing_opt_in",
+                "missing_model",
+                "missing_smoke_approval",
+                "invalid_configuration",
+                "suite_failed",
+                "invalid_evidence",
+                "source_changed"
+              ]
+            },
+            { "type": "null" }
+          ]
+        }
+      },
+      "required": ["status", "failure"],
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "dirty": { "type": "boolean" },
+        "files": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^(?!\\/)(?!.*(?:^|\\/)\\.\\.(?:\\/|$))[A-Za-z0-9._/-]+$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "dependencyHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "configurationHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "fixtureHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "required": [
+        "commit",
+        "dirty",
+        "files",
+        "dependencyHash",
+        "configurationHash",
+        "fixtureHash"
+      ],
+      "additionalProperties": false
+    },
+    "model": {
+      "type": "object",
+      "properties": {
+        "requestedModelId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+            },
+            { "type": "null" }
+          ]
+        },
+        "returnedModelId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+            },
+            { "type": "null" }
+          ]
+        },
+        "providerVersion": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+            },
+            { "type": "null" }
+          ]
+        }
+      },
+      "required": [
+        "requestedModelId",
+        "provider",
+        "returnedModelId",
+        "providerVersion"
+      ],
+      "additionalProperties": false
+    },
+    "priceTable": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "datedAt": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            },
+            "source": { "type": "string", "format": "uri" },
+            "modelId": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+            },
+            "inputUsdPerMillion": { "type": "number", "minimum": 0 },
+            "outputUsdPerMillion": { "type": "number", "minimum": 0 }
+          },
+          "required": [
+            "datedAt",
+            "source",
+            "modelId",
+            "inputUsdPerMillion",
+            "outputUsdPerMillion"
+          ],
+          "additionalProperties": false
+        },
+        { "type": "null" }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "modelTurns": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "requestedTokens": { "type": "integer", "minimum": 1, "maximum": 8000 },
+        "maxEstimatedCostUsd": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 0.1
+        },
+        "timeoutMs": { "type": "integer", "minimum": 1, "maximum": 30000 }
+      },
+      "required": [
+        "modelTurns",
+        "requestedTokens",
+        "maxEstimatedCostUsd",
+        "timeoutMs"
+      ],
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "samples": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "executedSamples": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "passedSamples": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "usageMeasuredSamples": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "effectsMeasuredSamples": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "samples",
+        "executedSamples",
+        "passedSamples",
+        "usageMeasuredSamples",
+        "effectsMeasuredSamples"
+      ],
+      "additionalProperties": false
+    },
+    "runs": {
+      "minItems": 1,
+      "maxItems": 10,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,128}$" },
+          "status": { "type": "string", "enum": ["pass", "fail", "not_run"] },
+          "expectedEffects": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "observedEffects": {
+            "anyOf": [
+              { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+              { "type": "null" }
+            ]
+          },
+          "attempts": {
+            "type": "object",
+            "properties": {
+              "modelTurns": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  { "type": "null" }
+                ]
+              },
+              "toolCalls": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  { "type": "null" }
+                ]
+              },
+              "readAttempts": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  { "type": "null" }
+                ]
+              },
+              "dispatchAttempts": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  { "type": "null" }
+                ]
+              }
+            },
+            "required": [
+              "modelTurns",
+              "toolCalls",
+              "readAttempts",
+              "dispatchAttempts"
+            ],
+            "additionalProperties": false
+          },
+          "inputTokens": {
+            "anyOf": [
+              { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+              { "type": "null" }
+            ]
+          },
+          "outputTokens": {
+            "anyOf": [
+              { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+              { "type": "null" }
+            ]
+          },
+          "estimatedCostUsd": {
+            "anyOf": [{ "type": "number", "minimum": 0 }, { "type": "null" }]
+          },
+          "unknownUsage": { "type": "boolean" },
+          "ledger": {
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+                "outcome": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "completed",
+                        "live_failed",
+                        "live_timeout_or_abort",
+                        "live_not_dispatched_deadline"
+                      ]
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "reservedCostMicrousd": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "estimatedCostMicrousd": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "inputTokens": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "outputTokens": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "provider": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "returnedModelId": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "providerVersion": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$"
+                    },
+                    { "type": "null" }
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "outcome",
+                "reservedCostMicrousd",
+                "estimatedCostMicrousd",
+                "inputTokens",
+                "outputTokens",
+                "provider",
+                "returnedModelId",
+                "providerVersion"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "latencyMs": {
+            "anyOf": [{ "type": "number", "minimum": 0 }, { "type": "null" }]
+          },
+          "policyViolations": {
+            "anyOf": [
+              { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+              { "type": "null" }
+            ]
+          },
+          "duplicateEffects": {
+            "anyOf": [
+              { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "expectedEffects",
+          "observedEffects",
+          "attempts",
+          "inputTokens",
+          "outputTokens",
+          "estimatedCostUsd",
+          "unknownUsage",
+          "ledger",
+          "latencyMs",
+          "policyViolations",
+          "duplicateEffects"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "mode",
+    "reportId",
+    "createdAt",
+    "overall",
+    "execution",
+    "source",
+    "model",
+    "priceTable",
+    "configuration",
+    "summary",
+    "runs"
+  ],
+  "additionalProperties": false
+}

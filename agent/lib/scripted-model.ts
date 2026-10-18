@@ -25,6 +25,8 @@ function result(options: {
   if (process.env.ARL_LAB_MODE === "fixture") {
     assertFixtureTools(options.tools);
     const runId = fixtureRunId(options.prompt);
+    if (store().getRun(runId).sourceMode !== "fixture")
+      throw new Error("fixture_source_mode_denied");
     const id = createHash("sha256")
       .update(JSON.stringify(options.prompt))
       .digest("hex");

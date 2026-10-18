@@ -12,7 +12,7 @@ import { store } from "../lib/lab/runtime.ts";
 export default defineDynamic({
   events: {
     "session.started": () =>
-      process.env.ARL_LAB_MODE === "fixture"
+      ["fixture", "live"].includes(process.env.ARL_LAB_MODE ?? "")
         ? {
             get_delivery: defineTool({
               description: "Read the bound synthetic delivery status.",

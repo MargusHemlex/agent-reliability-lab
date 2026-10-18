@@ -4,8 +4,22 @@ import { AppStore } from "./store.ts";
 import { RUN_ID, ReceiptSchema } from "./contracts.ts";
 
 export function config() {
-  if (process.env.ARL_LAB_MODE !== "fixture")
-    throw new Error("Fixture lab mode required");
+  const mode = process.env.ARL_LAB_MODE;
+  if (mode !== "fixture" && mode !== "live")
+    throw new Error("Lab mode required");
+  if (
+    mode === "live" &&
+    (process.env.ARL_LIVE_OPT_IN !== "1" ||
+      !process.env.AI_GATEWAY_API_KEY ||
+      !process.env.AGENT_MODEL ||
+      Object.keys(process.env).some(
+        (key) =>
+          key.startsWith("ARL_FAULT_") ||
+          key === "ARL_TEST_MODE" ||
+          key === "ARL_CLOCK_FILE",
+      ))
+  )
+    throw new Error("live_configuration_denied");
   const dbPath = process.env.ARL_LAB_DB,
     serviceSecret = process.env.ARL_SERVICE_SECRET,
     operatorSecret = process.env.ARL_OPERATOR_SECRET;
@@ -31,6 +45,7 @@ export function config() {
   if (!Number.isSafeInteger(epoch) || epoch < 1)
     throw new Error("Worker epoch required");
   return {
+    mode: mode as "fixture" | "live",
     dbPath,
     serviceSecret,
     operatorSecret,

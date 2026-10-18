@@ -77,14 +77,17 @@ export default defineChannel({
         z.object({})
           .strict()
           .parse(await jsonBody(request));
-        return response({ mode: "fixture", namespace: await resetNamespace() });
+        return response({
+          mode: config().mode,
+          namespace: await resetNamespace(),
+        });
       }),
     ),
     GET(
       "/lab/runs",
       guarded(async () =>
         response({
-          mode: "fixture",
+          mode: config().mode,
           activeNamespace: currentNamespace(),
           runs: store()
             .listRuns()
@@ -97,7 +100,7 @@ export default defineChannel({
       guarded(async (_r, { params }) => {
         RUN_ID.parse(params.runId);
         return response({
-          mode: "fixture",
+          mode: config().mode,
           run: inspectRun(params.runId),
           events: store().getEvents(params.runId),
         });
@@ -124,13 +127,17 @@ export default defineChannel({
           limits,
           epoch: config().epoch,
           now: now(),
+          mode: config().mode,
         });
         const session = await from(runId).send(
           JSON.stringify({ runId, deliveryId: "delivery-001" }),
           { auth: runAuth(runId) },
         );
         store().bindSession(runId, session.id, now());
-        return response({ mode: "fixture", run: store().getRun(runId) }, 201);
+        return response(
+          { mode: config().mode, run: store().getRun(runId) },
+          201,
+        );
       }),
     ),
     POST(
@@ -191,7 +198,7 @@ export default defineChannel({
         } finally {
           if (decisions.get(runId) === active) decisions.delete(runId);
         }
-        return response({ mode: "fixture", run: store().getRun(runId) });
+        return response({ mode: config().mode, run: store().getRun(runId) });
       }),
     ),
     POST(
@@ -203,7 +210,10 @@ export default defineChannel({
         const run = store().getRun(params.runId);
         store().reject(run.runId, now());
         if (run.sessionId) await attachSession(run.sessionId).cancel();
-        return response({ mode: "fixture", run: store().getRun(run.runId) });
+        return response({
+          mode: config().mode,
+          run: store().getRun(run.runId),
+        });
       }),
     ),
     POST(
@@ -216,7 +226,10 @@ export default defineChannel({
         store().cancel(run.runId, now());
         if (!run.intent && run.sessionId)
           await attachSession(run.sessionId).cancel();
-        return response({ mode: "fixture", run: store().getRun(run.runId) });
+        return response({
+          mode: config().mode,
+          run: store().getRun(run.runId),
+        });
       }),
     ),
     POST(
@@ -237,7 +250,7 @@ export default defineChannel({
           store().getRun(run.runId).budget.exhausted
         )
           return response({
-            mode: "fixture",
+            mode: config().mode,
             run: store().getRun(run.runId),
             reconciliation,
           });
@@ -249,7 +262,10 @@ export default defineChannel({
           }),
           { auth: runAuth(run.runId) },
         );
-        return response({ mode: "fixture", run: store().getRun(run.runId) });
+        return response({
+          mode: config().mode,
+          run: store().getRun(run.runId),
+        });
       }),
     ),
   ],
