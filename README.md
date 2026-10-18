@@ -2,7 +2,7 @@
 
 A public-by-design engineering laboratory for durable agent execution, human approval and reproducible failure testing.
 
-**Status: milestone 4 failure evaluation implemented: 56 unit/HTTP tests and 33 evaluation cases pass locally. Exact-code Linux validation is recorded in the milestone review. Repository remains private.**
+**Status: milestone 4 failure evaluation implemented: 56 unit/HTTP tests and 33 evaluation cases pass locally and on Linux CI. Exact-code Linux validation is recorded in the milestone review. Repository remains private.**
 
 One synthetic delayed-delivery workflow reads delivery status, reads a versioned policy and records an approved resolution through exactly three tools. The worker, application database, separate sandbox HTTP service and effect database are real. Model decisions are scripted fixture decisions; no live model is called.
 
