@@ -15,7 +15,13 @@ Only authorized synthetic project source was supplied to external reviewers. Cre
 
 The installed SDK wire test uses an injected fetch implementation and verifies request endpoint/model/output cap while removing sensitive response metadata. The compiled process test blocks model networking, verifies three model turns with reported synthetic usage, requires exact approval and independently observes one sandbox effect. The normal CLI cannot select that test preload.
 
-Unit and HTTP tests cover missing credentials/opt-in, malformed or truncated responses, forbidden/cross-run tools, abort, buffered emission, persistent reservations, restart/replay, unknown usage, cumulative estimates and strict reports. The existing 33-case fixture evaluation remains a separate regression gate. Final exact-code Linux results and immutable evidence are recorded after the CI run completes.
+Unit and HTTP tests cover missing credentials/opt-in, malformed or truncated responses, forbidden/cross-run tools, abort, buffered emission, persistent reservations, restart/replay, unknown usage, cumulative estimates and strict reports. The existing 33-case fixture evaluation remains a separate regression gate. Exact-code Linux CI passed: 79 unit/HTTP tests, the compiled offline workflow, all 33 fixture cases, both report-schema freshness gates, build and all four runtime regression stages. [CI run](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39121690705) tested commit `227f8b78e73333ff6fd4fa05fd6319cd45d9c20f`. Downloaded reports passed canonical schema, semantic and current-source freshness validation before this documentation commit. Historical validation omits `--fresh` after HEAD changes.
+
+- [Offline compiled workflow observation](evidence/milestone-5-offline-workflow.json)
+- [Linux fixture JSON](evidence/milestone-5-linux-fixture.json) and [Markdown](evidence/milestone-5-linux-fixture.md)
+- [Linux live-not-run JSON](evidence/milestone-5-linux-live-not-run.json) and [Markdown](evidence/milestone-5-linux-live-not-run.md)
+
+The live report records zero executed and zero passed samples, with all usage/effect measurements unknown. Offline acceptance is complete; genuine provider validation is deferred by owner choice.
 
 A not-run report may show the priced default model candidate when no model was selected; it is not an observed provider identity. Per-call ledger identifiers are authoritative observations; summary identifiers are null if mixed or unavailable. Known zero usage is permitted only when local dispatch provably never occurred, not when an external call's usage is unknown.
 

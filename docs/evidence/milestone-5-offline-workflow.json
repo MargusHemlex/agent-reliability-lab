@@ -1,0 +1,9 @@
+{
+  "mode": "offline_gateway_simulation",
+  "actualProviderCalls": 0,
+  "passed": true,
+  "effects": 1,
+  "modelTurns": 3,
+  "sourceCommit": "227f8b78e73333ff6fd4fa05fd6319cd45d9c20f",
+  "ciUrl": "https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39121690705"
+}
