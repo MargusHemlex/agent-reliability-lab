@@ -1,0 +1,29 @@
+{
+  "name": "agent-reliability-lab",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "description": "Milestone-zero durability compatibility spike",
+  "license": "MIT",
+  "dependencies": {
+    "ai": "7.0.143",
+    "eve": "0.80.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5",
+    "prettier": "3.9.10",
+    "typescript": "7.0.2"
+  },
+  "scripts": {
+    "typecheck": "tsc",
+    "build": "EVE_TELEMETRY_DISABLED=1 eve build --skip-sandbox-prewarm",
+    "spike": "node spike/run.mjs",
+    "test": "node --test spike/model.test.mjs",
+    "format": "prettier --check agent spike/*.mjs package.json tsconfig.json",
+    "format:write": "prettier --write agent spike/*.mjs package.json tsconfig.json"
+  }
+}

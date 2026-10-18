@@ -1,0 +1,42 @@
+name: Milestone-zero checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  local-spike:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      EVE_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Reproduce default-runtime limitation
+        shell: bash
+        run: |
+          set +e
+          npm run spike
+          spike_status=$?
+          set -e
+          node --input-type=module -e "import fs from 'node:fs'; import assert from 'node:assert/strict'; const r=JSON.parse(fs.readFileSync('spike-results/latest.json')); assert.equal(r.outcome, 'NO_GO'); assert.equal(r.cases[0].status,'PASS'); assert.equal(r.cases[1].status,'FAIL'); assert.match(r.cases[1].reason,/exceeded 30000ms/);"
+          test "$spike_status" -eq 1
+          cp spike-results/latest.json spike-results/default.json
+      - name: Investigate experimental twenty-second lease
+        run: |
+          npm run spike -- --lease-seconds=20
+          cp spike-results/latest.json spike-results/experimental-20.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: milestone-zero-observations
+          path: spike-results/*.json
+          retention-days: 7

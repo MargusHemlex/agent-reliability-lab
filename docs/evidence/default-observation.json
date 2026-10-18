@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "framework": {
+    "name": "eve",
+    "version": "0.80.1"
+  },
+  "environment": {
+    "node": "v24.22.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "localOnly": true,
+    "model": "deterministic-test-model",
+    "inheritedCredentials": false
+  },
+  "cases": [
+    {
+      "name": "approval-survives-process-restart",
+      "status": "PASS",
+      "attempts": [
+        {
+          "phase": "started"
+        },
+        {
+          "phase": "completed"
+        }
+      ],
+      "events": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting",
+        "approval.settled",
+        "input.resolved",
+        "step.started",
+        "action.result",
+        "message.appended",
+        "message.completed",
+        "step.completed",
+        "turn.completed",
+        "session.waiting"
+      ],
+      "lockContenderExitCode": 73,
+      "initialEvents": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting"
+      ],
+      "pendingRequestPersisted": true,
+      "responseBoundary": "waiting",
+      "durationMs": 2724
+    },
+    {
+      "name": "interrupted-tool-recovery",
+      "status": "FAIL",
+      "attempts": [
+        {
+          "phase": "started"
+        }
+      ],
+      "events": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting",
+        "approval.settled",
+        "input.resolved",
+        "step.started"
+      ],
+      "lockContenderExitCode": 73,
+      "initialEvents": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting"
+      ],
+      "pendingRequestPersisted": false,
+      "reason": "interrupted-tool-recovery exceeded 30000ms",
+      "durationMs": 32142
+    }
+  ],
+  "outcome": "NO_GO"
+}
