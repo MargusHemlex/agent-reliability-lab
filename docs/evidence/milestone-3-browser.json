@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "mode": "fixture",
+  "browser": "Chrome extension via CUA",
+  "isolatedRuntime": true,
+  "realCredentialsUsed": false,
+  "checks": [
+    {
+      "name": "operator_login",
+      "status": "pass"
+    },
+    {
+      "name": "create_inspect_explicit_approve",
+      "status": "pass",
+      "runId": "4e668613-e6ea-4047-abe0-f48b4e3983c7",
+      "state": "succeeded",
+      "receiptEffectId": 1
+    },
+    {
+      "name": "reject_before_dispatch",
+      "status": "pass",
+      "runId": "6c2d925d-e3fa-4b39-ba73-284acf221247",
+      "state": "cancelled"
+    },
+    {
+      "name": "lower_model_turn_limit",
+      "status": "pass",
+      "runId": "6bf79763-705c-4096-ac11-6c8edf9e0dbd",
+      "state": "failed",
+      "error": "model_turn_budget"
+    },
+    {
+      "name": "namespace_reset_browser_confirmation",
+      "status": "blocked",
+      "reason": "Native confirmation opened; Chrome extension CDP dialog acceptance and focus commands timed out. Reset completion was not observed."
+    },
+    {
+      "name": "mobile_viewport",
+      "status": "not_run"
+    }
+  ],
+  "independentDatabaseEvidence": {
+    "runCount": 3,
+    "receiverEffects": 1,
+    "runs": [
+      {
+        "state": "succeeded",
+        "error": null,
+        "modelTurns": 3
+      },
+      {
+        "state": "cancelled",
+        "error": null,
+        "modelTurns": 3
+      },
+      {
+        "state": "failed",
+        "error": "model_turn_budget",
+        "modelTurns": 1
+      }
+    ]
+  },
+  "screenshot": "milestone-3-operator-desktop.png",
+  "limitations": [
+    "Namespace reset and retention are covered by separate process tests; this browser session does not establish their UI completion.",
+    "No mobile viewport claim is made."
+  ]
+}

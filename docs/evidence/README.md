@@ -21,3 +21,7 @@ The later overlap/ownership investigation is documented in ../OVERLAP-REVIEW.md 
 ## Milestone 2 workflow observations
 
 `milestone-2-local.json` and `milestone-2-ci.json` are separate eleven-case fixture observations of executable-source commit `bf1cfb27bb83142b5ecb86317e2b100846170cca` on macOS and Linux. Their twenty source/lock hashes match the reviewed candidate. The Linux report is from [CI run 39115927464](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39115927464). Each scenario is one sample; real HTTP, independent SQLite effects and worker crashes are exercised, while model decisions are scripted. Final schema-validated evaluation exports remain a later milestone. See [the scoped four-agent review](../MILESTONE-2-REVIEW.md).
+
+## Milestone 3 operator and budget observations
+
+`milestone-3-workflow-local.json`, `milestone-3-budgets-local.json` and corresponding `*-ci.json` files record separate eleven-case suites for source commit `e77beeb0a9bc0632a260fbacc229765d9f4e41ab`. The Linux files come from [CI run 39117575165](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39117575165); all 26 recorded executable/config hashes match the reviewed candidate. `milestone-3-retry-repeats.json` retains three focused bounded-read repetitions. `milestone-3-browser.json` and `milestone-3-operator-desktop.png` record the real Chrome core flow and explicitly retain the uncompleted native reset confirmation and untested mobile viewport. See [milestone 3 review](../MILESTONE-3-REVIEW.md).

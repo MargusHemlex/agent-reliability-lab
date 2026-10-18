@@ -2,11 +2,11 @@
 
 A public-by-design engineering laboratory for durable agent execution, human approval and reproducible failure testing.
 
-**Status: milestone 3 operator UI and durable fixture budgets implemented; final validation is in progress. Repository remains private.**
+**Status: milestone 3 operator UI and durable fixture budgets implemented and reviewed by all four agents; 47 unit/HTTP tests and 22 process cases pass locally and on Linux CI. Repository remains private.**
 
 One synthetic delayed-delivery workflow reads delivery status, reads a versioned policy and records an approved resolution through exactly three tools. The worker, application database, separate sandbox HTTP service and effect database are real. Model decisions are scripted fixture decisions; no live model is called.
 
-Start with the [operator UI and budget walkthrough](docs/MILESTONE-3.md) and [budget/access-control ADR](docs/adr/0003-execution-budgets.md). The prior [milestone 2 architecture](docs/MILESTONE-2.md) and [review](docs/MILESTONE-2-REVIEW.md) remain historical evidence.
+Start with the [operator UI and budget walkthrough](docs/MILESTONE-3.md) and [budget/access-control ADR](docs/adr/0003-execution-budgets.md). The [milestone review](docs/MILESTONE-3-REVIEW.md) records browser evidence and the remaining native reset-confirmation UI check. The prior [milestone 2 architecture](docs/MILESTONE-2.md) and [review](docs/MILESTONE-2-REVIEW.md) remain historical evidence.
 
 ## Runtime decision
 

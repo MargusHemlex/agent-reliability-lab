@@ -1,6 +1,6 @@
 # ADR 0003: durable execution budgets and browser operator boundary
 
-Status: implementation candidate; final four-agent review and exact-code Linux CI pending.
+Status: accepted for the private single-host fixture milestone after four-agent review and exact-code Linux CI. Core browser flows passed; native reset-confirmation completion remains a manual UI check.
 
 ## Decision
 

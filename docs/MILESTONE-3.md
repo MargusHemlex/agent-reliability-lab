@@ -1,6 +1,6 @@
 # Milestone 3: operator UI and durable budgets
 
-Status: implementation candidate. Final process, browser, four-agent review and Linux CI results are recorded below when available. The repository remains PRIVATE.
+Status: implemented and accepted for the constrained private fixture scope after four-agent source review and exact-code Linux CI. Core browser flows pass; native namespace-reset confirmation remains a manual UI check. The repository remains PRIVATE.
 
 ## Operator walkthrough
 
@@ -63,7 +63,7 @@ npm run spike:ownership
 
 `test:workflow` retains the prior eleven recovery/approval cases. `test:milestone3` adds real-process budget denial, approval-wait exclusion, crash accounting, read-only recovery, retry exhaustion/timeout recovery, namespace preservation and browser-session/API coverage. Named test-only hooks never activate in normal CLI mode. Each harness has an independent effect-table check and cleans process groups.
 
-Final source-bound observations and the actual browser walkthrough are linked from the milestone review after execution. These preliminary reports are not yet the final schema-validated adverse-case evaluation export.
+[The milestone review](MILESTONE-3-REVIEW.md) links source-bound local/Linux observations and the actual browser walkthrough. All 47 unit/HTTP tests and 22 process cases pass. Chrome sign-in, explicit proposal approval, receipt display, rejection and lowered-model-budget exhaustion passed with independent database checks. The namespace reset confirmation opened, but automation could not accept the native dialog; no browser reset completion or mobile viewport result is claimed. Namespace reset and retention passed separate local/Linux process tests. These preliminary reports are not yet the final schema-validated adverse-case evaluation export.
 
 ## Remaining milestones
 
