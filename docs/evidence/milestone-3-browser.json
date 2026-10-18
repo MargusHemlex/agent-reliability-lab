@@ -60,7 +60,7 @@
       }
     ]
   },
-  "screenshot": "milestone-3-operator-desktop.png",
+  "screenshot": "milestone-3-operator-desktop.jpg",
   "limitations": [
     "Namespace reset and retention are covered by separate process tests; this browser session does not establish their UI completion.",
     "No mobile viewport claim is made."

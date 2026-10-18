@@ -1,4 +1,8 @@
-# Historical milestone-zero observations
+# Evidence index
+
+Current implementation evidence is recorded in [milestone 4](../MILESTONE-4-REVIEW.md) and [milestone 5](../MILESTONE-5-REVIEW.md). Canonical fixture/live report schemas are now implemented. Genuine live-provider validation remains not run. Historical records below retain their original scope; statements about deferred work describe that earlier stage. The current CI uploads canonical evaluation/live reports and focused walkthrough observations, not all raw spike outputs.
+
+## Historical milestone-zero observations
 
 These are sanitized local observations, not fixtures pretending to be executions and not a certificate for later source changes.
 
@@ -8,9 +12,9 @@ These are sanitized local observations, not fixtures pretending to be executions
 
 The inner 30-second watchdog starts after initial server startup; reported durationMs includes startup and cleanup. The twenty-second observation finished in 21,598 ms total locally. This investigative watchdog is not yet a complete implementation of every future application deadline.
 
-A report's sourceSnapshot captures checked-out source/lock bytes, not a cryptographic attestation that a particular build consumed them. The probe's build/run were performed locally in this investigation. Build provenance and generated report schemas are later deliverables and remain unimplemented; do not infer full release readiness from this evidence.
+A report's sourceSnapshot captures checked-out source/lock bytes, not a cryptographic attestation that a particular build consumed them. The probe's build/run were performed locally in this investigation. At that historical milestone, build provenance and generated report schemas were later deliverables and remained unimplemented; do not infer full release readiness from this evidence.
 
-CI reruns default and experimental cases and uploads fresh observations separately. Its success would mean the expected limitation was reproduced and the explicit experiment passed; the architecture HOLD still applies. CI results on another host are not claimed until observed.
+The historical CI reran default and experimental cases and uploaded fresh observations separately. Its success would mean the expected limitation was reproduced and the explicit experiment passed; the architecture HOLD still applies. CI results on another host are not claimed until observed.
 
 `lease-20-final-observation.json` repeats the twenty-second experiment after final formatting and a fresh build. Its source hashes identify the final executable spike sources; the earlier twenty-second report is retained as a separate historical observation.
 
@@ -20,8 +24,8 @@ The later overlap/ownership investigation is documented in ../OVERLAP-REVIEW.md 
 
 ## Milestone 2 workflow observations
 
-`milestone-2-local.json` and `milestone-2-ci.json` are separate eleven-case fixture observations of executable-source commit `bf1cfb27bb83142b5ecb86317e2b100846170cca` on macOS and Linux. Their twenty source/lock hashes match the reviewed candidate. The Linux report is from [CI run 39115927464](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39115927464). Each scenario is one sample; real HTTP, independent SQLite effects and worker crashes are exercised, while model decisions are scripted. Final schema-validated evaluation exports remain a later milestone. See [the scoped four-agent review](../MILESTONE-2-REVIEW.md).
+`milestone-2-local.json` and `milestone-2-ci.json` are separate eleven-case fixture observations of executable-source commit `bf1cfb27bb83142b5ecb86317e2b100846170cca` on macOS and Linux. Their twenty source/lock hashes match the reviewed candidate. The Linux report is from [CI run 39115927464](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39115927464). Each scenario is one sample; real HTTP, independent SQLite effects and worker crashes are exercised, while model decisions are scripted. At that stage, final schema-validated evaluation exports remained a later milestone. See [the scoped four-agent review](../MILESTONE-2-REVIEW.md).
 
 ## Milestone 3 operator and budget observations
 
-`milestone-3-workflow-local.json`, `milestone-3-budgets-local.json` and corresponding `*-ci.json` files record separate eleven-case suites for source commit `e77beeb0a9bc0632a260fbacc229765d9f4e41ab`. The Linux files come from [CI run 39117575165](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39117575165); all 26 recorded executable/config hashes match the reviewed candidate. `milestone-3-retry-repeats.json` retains three focused bounded-read repetitions. `milestone-3-browser.json` and `milestone-3-operator-desktop.png` record the real Chrome core flow and explicitly retain the uncompleted native reset confirmation and untested mobile viewport. See [milestone 3 review](../MILESTONE-3-REVIEW.md).
+`milestone-3-workflow-local.json`, `milestone-3-budgets-local.json` and corresponding `*-ci.json` files record separate eleven-case suites for source commit `e77beeb0a9bc0632a260fbacc229765d9f4e41ab`. The Linux files come from [CI run 39117575165](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39117575165); all 26 recorded executable/config hashes match the reviewed candidate. `milestone-3-retry-repeats.json` retains three focused bounded-read repetitions. `milestone-3-browser.json` and `milestone-3-operator-desktop.jpg` record the real Chrome core flow and explicitly retain the uncompleted native reset confirmation and untested mobile viewport. See [milestone 3 review](../MILESTONE-3-REVIEW.md).

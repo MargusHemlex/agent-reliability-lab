@@ -17,12 +17,15 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci --ignore-scripts
+      - run: npm run docs:check
       - run: npm run typecheck
       - run: npm run format
       - run: npm test
       - run: npm run reports:live-schema
       - run: npm run reports:schema
       - run: npm run build
+      - name: Five-minute guided fixture walkthrough
+        run: npm run walkthrough
       - name: Offline Gateway adapter through the compiled workflow
         run: npm run test:live-workflow
       - name: Explicitly unexecuted live-provider evidence
@@ -56,4 +59,6 @@ jobs:
             reports/evaluation/*.md
             reports/live/*.json
             reports/live/*.md
+            reports/walkthrough/*.json
+            reports/walkthrough/*.md
           retention-days: 7
