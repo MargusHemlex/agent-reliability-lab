@@ -539,6 +539,120 @@ try {
       await f.stop();
     }
   });
+
+  await runCase(
+    "unknown_outcome_absent_receipt_same_key_redispatch",
+    async () => {
+      const f = await fixture({ before: true });
+      try {
+        const id = await f.create();
+        await f.waiting(id);
+        await f.approve(id);
+        await until(
+          () => existsSync(join(f.app, "worker-barrier", "dispatch_ready")),
+          "unknown outcome dispatch barrier",
+        );
+        const original = (await f.inspect(id)).run.intent;
+        assert.ok(original);
+        assert.equal(f.effectCount(), 0);
+        await f.killWorker();
+        const db = new DatabaseSync(f.env.ARL_LAB_DB, { readOnly: true });
+        const epoch = db
+          .prepare("SELECT epoch FROM ownership WHERE id=1")
+          .get().epoch;
+        db.close();
+        const appStore = new AppStore(f.env.ARL_LAB_DB);
+        try {
+          appStore.markUnknown(
+            id,
+            "synthetic_response_loss_before_dispatch",
+            Date.now(),
+            epoch,
+          );
+        } finally {
+          appStore.close();
+        }
+        await writeFile(join(f.app, "worker-barrier", "release"), "release");
+        await f.restart();
+        const restarted = await f.inspect(id);
+        assert.equal(restarted.run.intent.key, original.key);
+        if (restarted.run.state !== "succeeded") {
+          const resumed = await f.api(`/lab/runs/${id}/resume`, {});
+          assert.equal(resumed.status, 200);
+        }
+        const done = await until(
+          async () => {
+            const result = await f.inspect(id);
+            return result.run.state === "succeeded" && result;
+          },
+          "unknown outcome absent-receipt recovery",
+          30000,
+        );
+        assert.equal(done.run.intent.key, original.key);
+        assert.equal(f.effectCount(), 1);
+        assert.equal(done.run.receipt.key, original.key);
+        return {
+          effects: 1,
+          keyPreserved: true,
+          reconciledAbsentReceipt: true,
+        };
+      } finally {
+        await f.stop();
+      }
+    },
+  );
+  await runCase(
+    "cancel_after_commit_expiry_confirmation_zero_effect",
+    async () => {
+      const f = await fixture({ before: true, clock: true });
+      try {
+        const id = await f.create();
+        await f.waiting(id);
+        await f.approve(id);
+        await until(
+          () => existsSync(join(f.app, "worker-barrier", "dispatch_ready")),
+          "cancel expiry dispatch barrier",
+        );
+        const original = (await f.inspect(id)).run.intent;
+        assert.ok(original);
+        await f.advanceClock(original.expiresAt + 1, 1);
+        await writeFile(join(f.app, "worker-barrier", "release"), "release");
+        const expired = await until(async () => {
+          const result = await f.inspect(id);
+          return result.run.state === "awaiting_reapproval" && result;
+        }, "confirmed expiry before cancellation");
+        assert.equal(f.effectCount(), 0);
+        assert.equal(expired.run.intent.key, original.key);
+        const cancelled = await f.api(`/lab/runs/${id}/cancel`, {});
+        assert.equal(cancelled.status, 200);
+        assert.equal(cancelled.run.state, "cancelled");
+        assert.equal(cancelled.run.cancellationRequested, true);
+        const replay = await f.api(`/lab/runs/${id}/approve`, {
+          proposalDigest: expired.run.proposal.digest,
+        });
+        assert.ok(
+          replay.status === 409 ||
+            (replay.status === 200 && replay.run.state === "cancelled"),
+        );
+        const final = await f.inspect(id);
+        assert.equal(final.run.state, "cancelled");
+        assert.equal(final.run.approval.consumed, true);
+        assert.equal(
+          final.events.filter((event) => event.kind === "approval_decision")
+            .length,
+          1,
+        );
+        assert.equal(f.effectCount(), 0);
+        return {
+          effects: 0,
+          terminalState: "cancelled",
+          approvalReplayBlocked: true,
+        };
+      } finally {
+        await f.stop();
+      }
+    },
+  );
 } finally {
   for (const child of [...children]) await kill(child);
   await mkdir(join(root, "reports"), { recursive: true });

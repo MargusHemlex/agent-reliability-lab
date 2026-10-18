@@ -217,7 +217,10 @@ export class AppStore {
         if (!["queued", "running"].includes(run.state))
           throw new Error("read not allowed");
         if (now > run.deadline) throw new Error("run deadline");
-        if (Buffer.byteLength(stable({ input, output })) > 16384)
+        if (
+          Buffer.byteLength(stable(input)) > 16384 ||
+          Buffer.byteLength(stable(output)) > 16384
+        )
           throw new Error("tool payload limit");
         if (run.toolCalls >= 8) throw new Error("tool budget exhausted");
         run.toolCalls++;
@@ -316,7 +319,8 @@ export class AppStore {
       if (["succeeded", "failed", "cancelled"].includes(run.state))
         throw new Error("terminal run");
       run.cancellationRequested = true;
-      if (!run.intent) run.state = "cancelled";
+      if (!run.intent || run.state === "awaiting_reapproval")
+        run.state = "cancelled";
     });
   }
   createDispatch(runId: string, input: { now: number; epoch: number }): Intent {
@@ -326,8 +330,13 @@ export class AppStore {
       "dispatch_intent",
       (run) => {
         this.owner(input.epoch);
-        if (run.intent && run.state === "executing") {
+        if (
+          run.intent &&
+          ["executing", "unknown_outcome"].includes(run.state)
+        ) {
+          run.state = "executing";
           run.intent.epoch = input.epoch;
+          run.epoch = input.epoch;
           return run.intent;
         }
         if (

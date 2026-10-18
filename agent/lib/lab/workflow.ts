@@ -99,35 +99,44 @@ export async function recordResolution(
   let run = store().getRun(runId);
   const epoch = config().epoch;
   if (run.intent) {
+    let saved;
     try {
-      const saved = await receipt(run.intent.key);
-      if (saved) {
-        if (
-          saved.key !== run.intent.key ||
-          saved.runId !== runId ||
-          saved.payloadDigest !==
-            payloadDigest(ResolutionSchema.parse(run.intent))
-        )
-          throw new Error("receipt_binding_denied");
-        if (run.state !== "succeeded")
-          store().succeed(runId, saved, now(), epoch);
-        return {
-          mode: "fixture",
-          status: "succeeded",
-          receipt: saved,
-          reconciled: true,
-        };
-      }
+      saved = await receipt(run.intent.key);
     } catch {
       if (run.state !== "succeeded")
         store().markUnknown(runId, "receipt_lookup_unavailable", now(), epoch);
       return { mode: "fixture", status: "unknown_outcome" };
     }
+    if (saved) {
+      if (
+        saved.key !== run.intent.key ||
+        saved.runId !== runId ||
+        saved.payloadDigest !==
+          payloadDigest(ResolutionSchema.parse(run.intent))
+      ) {
+        // A mismatched receipt cannot establish no effect or authorize another write.
+        store().markUnknown(runId, "receipt_binding_denied", now(), epoch);
+        return {
+          mode: "fixture",
+          status: "unknown_outcome",
+          reason: "receipt_binding_denied",
+        };
+      }
+      if (run.state !== "succeeded")
+        store().succeed(runId, saved, now(), epoch);
+      return {
+        mode: "fixture",
+        status: "succeeded",
+        receipt: saved,
+        reconciled: true,
+      };
+    }
+    // A successful absent lookup permits only retry of this already authorized
+    // identity. Concurrent/late requests share its key; the receiver rechecks
+    // authorization expiry and fencing for every new commit.
   }
   if (run.state === "succeeded")
     throw new Error("receipt_missing_for_succeeded_run");
-  if (run.state === "unknown_outcome")
-    return { mode: "fixture", status: "unknown_outcome" };
   const intent = ResolutionSchema.parse(
     store().createDispatch(runId, { now: now(), epoch }),
   );

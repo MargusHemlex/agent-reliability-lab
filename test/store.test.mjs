@@ -235,3 +235,100 @@ test("late receipt may resolve awaiting reapproval without fresh dispatch", (t) 
   assert.equal(store.getRun("r1").state, "succeeded");
   assert.equal(store.getRun("r1").toolCalls, 1);
 });
+
+test("unknown dispatch resumes the same accepted intent without renewed authorization", (t) => {
+  const { store } = fixture(t);
+  approve(store);
+  const original = store.createDispatch("r1", { now: 300, epoch: 1 });
+  store.markUnknown("r1", "transport_timeout", 400, 1);
+  store.activateEpoch(2, 500);
+  assert.throws(
+    () => store.createDispatch("r1", { now: 600, epoch: 1 }),
+    /stale/,
+  );
+  const replay = store.createDispatch("r1", { now: 600, epoch: 2 });
+  assert.equal(replay.key, original.key);
+  assert.equal(replay.expiresAt, original.expiresAt);
+  assert.equal(replay.epoch, 2);
+  assert.equal(store.getRun("r1").epoch, 2);
+  assert.equal(store.getRun("r1").state, "executing");
+  assert.equal(store.getRun("r1").toolCalls, 1);
+  assert.equal(store.getRun("r1").approval.consumed, true);
+  assert.equal(
+    store.getEvents("r1").filter((e) => e.kind === "approval_decision").length,
+    1,
+  );
+  store.markUnknown("r1", "transport_timeout", 700, 2);
+  const expiredReplay = store.createDispatch("r1", {
+    now: original.expiresAt + 1,
+    epoch: 2,
+  });
+  assert.equal(
+    expiredReplay.expiresAt,
+    original.expiresAt,
+    "retry must not extend sandbox authorization",
+  );
+  assert.equal(expiredReplay.key, original.key);
+});
+test("cancel after confirmed expiration terminates without inventing rollback", (t) => {
+  const { store } = fixture(t);
+  approve(store);
+  store.createDispatch("r1", { now: 300, epoch: 1 });
+  store.awaitReapproval("r1", 900201, 1);
+  store.cancel("r1", 900202);
+  const cancelled = store.getRun("r1");
+  assert.equal(cancelled.state, "cancelled");
+  assert.equal(cancelled.cancellationRequested, true);
+  assert.ok(cancelled.intent);
+  assert.equal(cancelled.receipt, null);
+  assert.throws(
+    () => store.createDispatch("r1", { now: 900203, epoch: 1 }),
+    /denied/,
+  );
+  assert.throws(
+    () =>
+      store.approve("r1", {
+        proposalDigest: cancelled.proposal.digest,
+        now: 900203,
+      }),
+    /conflict/,
+  );
+});
+
+test("tool payload limit applies independently to input and output", (t) => {
+  const { store } = fixture(t);
+  const input = { synthetic: "i".repeat(9000) },
+    output = { synthetic: "o".repeat(9000) };
+  assert.ok(Buffer.byteLength(JSON.stringify({ input, output })) > 16384);
+  store.recordRead("r1", "bounded_read", input, output, 100, 1);
+  assert.deepEqual(store.getRead("r1", "bounded_read", input), output);
+  assert.throws(
+    () =>
+      store.recordRead(
+        "r1",
+        "large_input",
+        { synthetic: "i".repeat(16384) },
+        { ok: true },
+        200,
+        1,
+      ),
+    /payload limit/,
+  );
+  assert.throws(
+    () =>
+      store.recordRead(
+        "r1",
+        "large_output",
+        { small: true },
+        { synthetic: "o".repeat(16384) },
+        200,
+        1,
+      ),
+    /payload limit/,
+  );
+  assert.equal(
+    store.getRun("r1").toolCalls,
+    1,
+    "rejected payloads do not commit attempts",
+  );
+});
