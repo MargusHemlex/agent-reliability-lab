@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "experiment": "launcher-only-death",
+  "leaseSeconds": 20,
+  "frameworkVersion": "0.80.1",
+  "mode": "fixture",
+  "cases": [],
+  "sourceSnapshot": {
+    "spike/runtime-compatibility.mjs": "679d94f9fc4300df0d7608adcd06b3674b5cc4ee7243ad4a088749a32bdee034",
+    "agent/tools/probe.ts": "ee3fcaf5a0e8690098bf06d1fcb3e6f25b5657d22fb7f8334f511dc59e8928dc",
+    "spike/locked-start.py": "906255986b2f2ebfef25f045faa5077496e1029bf27dfed5af0bd474697bc3f0",
+    "spike/ownership.mjs": "0e9310ac25cf47cd786d5c18a6939edeacaeaa372c04e3c930bc9306e83c7dfc",
+    "package-lock.json": "4e76b468c6ab8276f2e275a0d78d92c22f2a65ad0e904442c89898d01fb75364"
+  },
+  "runtimeCompatibility": {
+    "version": "0.80.1",
+    "hashes": {
+      "dist/src/compiled/_chunks/workflow/helpers-DlLD3ov_.js": "747627feb4fc23f0bd998d2f4ca42969b6681380ded6d57fef3dd6fe5ca14903",
+      "dist/src/compiled/@workflow/core/runtime.js": "4422b829266cd9daf01d5a9b861aa5dbccf3c1a0a3ab8398da85e60e74d5397e",
+      "dist/src/compiled/@workflow/world-local/index.js": "2b049eae015887730a6b92a0fd00fd1cb099543859ed9f7490a377c1bae1a516"
+    }
+  },
+  "workerWasLauncher": true,
+  "originalWorkerAliveAfterLauncherDeath": false,
+  "workerDeathObservedAtNs": "145258151220",
+  "secondStartAccepted": true,
+  "oldWorkerStillAliveAtSecondInvocation": false,
+  "replacementRecoveryCompleted": true,
+  "attempts": [
+    {
+      "phase": "started",
+      "invocationId": "bb8f5665-142d-4193-abfa-1d363e91223d",
+      "pid": 2521,
+      "monotonicNs": "145228213390"
+    },
+    {
+      "phase": "started",
+      "invocationId": "14bc7eb7-9ec7-46d2-89af-5bdf97075ab4",
+      "pid": 2547,
+      "monotonicNs": "165938820067"
+    },
+    {
+      "phase": "completed",
+      "invocationId": "14bc7eb7-9ec7-46d2-89af-5bdf97075ab4",
+      "pid": 2547,
+      "monotonicNs": "165938891728"
+    }
+  ],
+  "outcome": "PASS_WORKER_HELD_LOCK",
+  "limits": "Single-host lock lifetime only; not a distributed lease or transactional effect test"
+}

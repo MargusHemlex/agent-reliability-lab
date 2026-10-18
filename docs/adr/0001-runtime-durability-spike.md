@@ -45,3 +45,7 @@ The two-second experiment passed both cases. A separate twenty-second experiment
 Decision: **milestone-zero investigation complete; HOLD / NO_GO for milestone two**. Replay feasibility is demonstrated under explicitly experimental tuning, but the default fails the required deadline and safe ownership for a slow still-alive step/duplicate delivery is unproven. `CONDITIONAL_GO` in a tuned report means those two cases passed with an internal configuration dependency; it is not approval to proceed past this ADR's HOLD.
 
 Next technical decision: validate a step-duration/lease contract with slow-alive and duplicate-delivery tests and obtain a supported configuration path, or approve the proposed runtime replacement and repeat the gate. Retain default and tuned evidence separately. No full workflow, operator UI, application database or external-effect service has been built at this stage.
+
+## Subsequent decision
+
+ADR 0002 supersedes this HOLD only for the explicitly pinned, guarded twenty-second, single-actual-worker configuration after slow-step/callback and corrected ownership tests passed on macOS and Linux. This ADR's default-configuration failure and scope limitations remain valid.

@@ -1,0 +1,491 @@
+{
+  "config": {
+    "ownershipLeaseSeconds": 20,
+    "override": true,
+    "status": "Source-observed experimental setting; not a stable documented public API",
+    "acceptanceWindowMs": 45000,
+    "heldStepMs": 22000,
+    "originalRecoveryGateMs": 30000,
+    "purpose": "Adversarial live-step experiment; 45s watchdog does not alter the original 30s recovery gate"
+  },
+  "schemaVersion": 1,
+  "framework": {
+    "name": "eve",
+    "version": "0.80.1",
+    "leaseHelperSha256": "747627feb4fc23f0bd998d2f4ca42969b6681380ded6d57fef3dd6fe5ca14903"
+  },
+  "environment": {
+    "node": "v24.21.0",
+    "platform": "linux",
+    "arch": "x64",
+    "localOnly": true,
+    "model": "deterministic-test-model",
+    "inheritedCredentials": false
+  },
+  "cases": [
+    {
+      "name": "live-slow-step-with-repeated-approval-requests",
+      "status": "PASS",
+      "coverage": "Repeated approval API requests only; this is NOT actual runtime queue redelivery",
+      "hypothesis": "A live held step is not concurrently re-executed by repeated approval requests before/after the experimental lease",
+      "duplicateResponses": [
+        {
+          "label": "before-lease",
+          "accepted": true
+        },
+        {
+          "label": "before-lease",
+          "accepted": true
+        },
+        {
+          "label": "before-lease",
+          "accepted": true
+        },
+        {
+          "label": "after-20s-lease",
+          "accepted": true
+        },
+        {
+          "label": "after-20s-lease",
+          "accepted": true
+        },
+        {
+          "label": "after-20s-lease",
+          "accepted": true
+        },
+        {
+          "label": "before-lease",
+          "settled": {
+            "status": "waiting"
+          }
+        },
+        {
+          "label": "before-lease",
+          "settled": {
+            "status": "waiting"
+          }
+        },
+        {
+          "label": "before-lease",
+          "settled": {
+            "status": "waiting"
+          }
+        },
+        {
+          "label": "after-20s-lease",
+          "settled": {
+            "status": "waiting"
+          }
+        },
+        {
+          "label": "after-20s-lease",
+          "settled": {
+            "status": "waiting"
+          }
+        },
+        {
+          "label": "after-20s-lease",
+          "settled": {
+            "status": "waiting"
+          }
+        }
+      ],
+      "lockContenderExitCode": 73,
+      "initialEvents": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting"
+      ],
+      "originalProcessAliveAfterLease": true,
+      "heldEvents": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting",
+        "approval.settled",
+        "input.resolved",
+        "step.started"
+      ],
+      "heldIntervalSummary": {
+        "starts": 1,
+        "completions": 0,
+        "maxConcurrency": 1,
+        "intervals": [],
+        "openInvocations": 1
+      },
+      "releaseAfterMs": 22030,
+      "events": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting",
+        "approval.settled",
+        "input.resolved",
+        "step.started",
+        "action.result",
+        "message.appended",
+        "message.completed",
+        "step.completed",
+        "turn.completed",
+        "session.waiting",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "message.appended",
+        "message.completed",
+        "step.completed",
+        "turn.completed",
+        "session.waiting"
+      ],
+      "finalPendingRequests": 0,
+      "initialApprovalResult": {
+        "status": "waiting"
+      },
+      "intervalSummary": {
+        "starts": 1,
+        "completions": 1,
+        "maxConcurrency": 1,
+        "intervals": [
+          {
+            "invocationId": "e24744c0-3efe-4364-a928-df518a2da3aa",
+            "pid": 2433,
+            "startNs": "96387260611",
+            "endNs": "118453858683"
+          }
+        ],
+        "openInvocations": 0
+      },
+      "extraTurnsObserved": 1,
+      "sameTurnCompleted": true,
+      "attempts": [
+        {
+          "sessionId": "wrun_01M573P9676Z43Z2HTH0G4JF3E",
+          "invocationId": "e24744c0-3efe-4364-a928-df518a2da3aa",
+          "pid": 2433,
+          "monotonicNs": "96387260611",
+          "phase": "started"
+        },
+        {
+          "sessionId": "wrun_01M573P9676Z43Z2HTH0G4JF3E",
+          "invocationId": "e24744c0-3efe-4364-a928-df518a2da3aa",
+          "pid": 2433,
+          "monotonicNs": "118453858683",
+          "phase": "completed"
+        }
+      ],
+      "durationMs": 24250,
+      "sanitizedRuntimeLogSha256": "a552d1301cb93869d3055ef858fa661350ac5d93d9912b9b38d8e5769e12be58"
+    },
+    {
+      "name": "live-slow-step-with-actual-callback-redelivery",
+      "status": "PASS",
+      "coverage": "Captured actual runtime callback replay with exact body/message identity plus a fresh-message wake after lease; one process only",
+      "hypothesis": "A held live runtime step remains singleflight under actual callback redelivery before and after the configured ownership lease within one process",
+      "duplicateResponses": [],
+      "lockContenderExitCode": 73,
+      "initialEvents": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting"
+      ],
+      "callbackOwnerMatched": true,
+      "callbackOwnerMessageIdSha256": "608f0a35f97684a220fa42d3182cdaa9d5e8faf9b09042883f1a49cb94c3730e",
+      "callbackOwnerEventSha256": "3a88e97451ebf0a213752acb12f3b95982b3f4c885fd6a3bbe78c399f5866d53",
+      "originalProcessAliveAfterLease": true,
+      "heldEvents": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting",
+        "approval.settled",
+        "input.resolved",
+        "step.started"
+      ],
+      "heldIntervalSummary": {
+        "starts": 1,
+        "completions": 0,
+        "maxConcurrency": 1,
+        "intervals": [],
+        "openInvocations": 1
+      },
+      "releaseAfterMs": 22013,
+      "events": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting",
+        "approval.settled",
+        "input.resolved",
+        "step.started",
+        "action.result",
+        "message.appended",
+        "message.completed",
+        "step.completed",
+        "turn.completed",
+        "session.waiting"
+      ],
+      "finalPendingRequests": 0,
+      "initialApprovalResult": {
+        "status": "waiting"
+      },
+      "intervalSummary": {
+        "starts": 1,
+        "completions": 1,
+        "maxConcurrency": 1,
+        "intervals": [
+          {
+            "invocationId": "eb5781ec-fb58-41ce-a550-ef885f3d5897",
+            "pid": 2463,
+            "startNs": "120613604709",
+            "endNs": "142674939166"
+          }
+        ],
+        "openInvocations": 0
+      },
+      "injectedCallbackResults": [
+        {
+          "label": "before-lease",
+          "status": 200
+        },
+        {
+          "label": "after-20s-lease",
+          "status": 200
+        },
+        {
+          "label": "after-20s-lease-fresh-wake",
+          "status": 200
+        }
+      ],
+      "callbackTransports": [
+        {
+          "path": "/.well-known/workflow/v1/flow",
+          "bodySha256": "4242c58fea891399b489974b374eec75ba21e9f94b80452a7d6cdec487d8d41d",
+          "queueIdSha256": "a37a2fc25134f5836f26151a1eeb0b219ebcf65d55f521a2f32e44c916790b20",
+          "messageIdSha256": "5412a535bce6b31dc158c60e6362c023c6209c11324db23be7c9ecb973eff3ef",
+          "attempt": 1,
+          "injected": false,
+          "status": 200
+        },
+        {
+          "path": "/.well-known/workflow/v1/flow",
+          "bodySha256": "5908d116457d3ad8c8752233f2dbebd1b982c8a0cb7dfe1c75b4d322ef25a404",
+          "queueIdSha256": "a37a2fc25134f5836f26151a1eeb0b219ebcf65d55f521a2f32e44c916790b20",
+          "messageIdSha256": "938ed3d1f084def4c73102a6076105e84e8c903d52253fd15bc50047b30415b6",
+          "attempt": 1,
+          "injected": false,
+          "status": 200
+        },
+        {
+          "path": "/.well-known/workflow/v1/flow",
+          "bodySha256": "90f4d177a6430aecdd4565c1deb9328fad59f60ed2699f8cfbbf9bae81b1e2ae",
+          "queueIdSha256": "46e7bb02859baccfe1c8f8b11690fe628a37c9e76ee7e57c95babcdd3dd2c1f9",
+          "messageIdSha256": "0872d2c25a807aee6d4fd4b8a2ec5b519f7c71eb461eda359aa05369faa21c9f",
+          "attempt": 1,
+          "injected": false,
+          "status": 200
+        },
+        {
+          "path": "/.well-known/workflow/v1/flow",
+          "bodySha256": "21616c6dcb19d86f101e94026404b216c2e4c7fba3675e5d2a5adf7dc5ad4434",
+          "queueIdSha256": "a37a2fc25134f5836f26151a1eeb0b219ebcf65d55f521a2f32e44c916790b20",
+          "messageIdSha256": "608f0a35f97684a220fa42d3182cdaa9d5e8faf9b09042883f1a49cb94c3730e",
+          "attempt": 1,
+          "injected": false,
+          "status": 200
+        },
+        {
+          "path": "/.well-known/workflow/v1/flow",
+          "bodySha256": "21616c6dcb19d86f101e94026404b216c2e4c7fba3675e5d2a5adf7dc5ad4434",
+          "queueIdSha256": "a37a2fc25134f5836f26151a1eeb0b219ebcf65d55f521a2f32e44c916790b20",
+          "messageIdSha256": "608f0a35f97684a220fa42d3182cdaa9d5e8faf9b09042883f1a49cb94c3730e",
+          "attempt": 2,
+          "injected": true,
+          "status": 200
+        },
+        {
+          "path": "/.well-known/workflow/v1/flow",
+          "bodySha256": "52995f7323660a4789c5e17203d7ce57f58bf405bcdf9053ee062fe9b1613255",
+          "queueIdSha256": "a37a2fc25134f5836f26151a1eeb0b219ebcf65d55f521a2f32e44c916790b20",
+          "messageIdSha256": "d61fb10b422136ab99b4f6f4f657a2d439533f9b921d5db8344d5db1608de74b",
+          "attempt": 1,
+          "injected": false,
+          "status": 200
+        },
+        {
+          "path": "/.well-known/workflow/v1/flow",
+          "bodySha256": "1c3fd48a18f71464a02a29f00233950fb7cd80a5b361a0e4bcf8d4ca60f5aca5",
+          "queueIdSha256": "a37a2fc25134f5836f26151a1eeb0b219ebcf65d55f521a2f32e44c916790b20",
+          "messageIdSha256": "903faf7d485eb6576b84e37b5c0d3d72ea61d5a1198754238f636f083b6dc653",
+          "attempt": 1,
+          "injected": false,
+          "status": 200
+        },
+        {
+          "path": "/.well-known/workflow/v1/flow",
+          "bodySha256": "a6e220401457cd58e5098def46e9ff847ebfb8f72f2b0f2fba18c9ceaf991275",
+          "queueIdSha256": "a37a2fc25134f5836f26151a1eeb0b219ebcf65d55f521a2f32e44c916790b20",
+          "messageIdSha256": "ff56ec1327f7ae4062e52f081dc4c37db6ad92c86ef800f459fdd9c1cf9bdff3",
+          "attempt": 1,
+          "injected": false,
+          "status": 200
+        },
+        {
+          "path": "/.well-known/workflow/v1/flow",
+          "bodySha256": "21616c6dcb19d86f101e94026404b216c2e4c7fba3675e5d2a5adf7dc5ad4434",
+          "queueIdSha256": "a37a2fc25134f5836f26151a1eeb0b219ebcf65d55f521a2f32e44c916790b20",
+          "messageIdSha256": "608f0a35f97684a220fa42d3182cdaa9d5e8faf9b09042883f1a49cb94c3730e",
+          "attempt": 2,
+          "injected": true,
+          "status": 200
+        },
+        {
+          "path": "/.well-known/workflow/v1/flow",
+          "bodySha256": "3a1ca6ce95ff94d14c782d94b7523ad109e2754cc833551817c969ce22f4a572",
+          "queueIdSha256": "a37a2fc25134f5836f26151a1eeb0b219ebcf65d55f521a2f32e44c916790b20",
+          "messageIdSha256": "b26eeb5d7381d7ae63f7aa435e0b80ab9fe6aecac2c1dfc8eb1fd41c0758f1be",
+          "attempt": 1,
+          "injected": true,
+          "status": 200
+        }
+      ],
+      "singleflightLogObserved": true,
+      "extraTurnsObserved": 0,
+      "sameTurnCompleted": true,
+      "attempts": [
+        {
+          "sessionId": "wrun_01M573Q0WGCC0T4MTVJ4RPCZJD",
+          "invocationId": "eb5781ec-fb58-41ce-a550-ef885f3d5897",
+          "pid": 2463,
+          "monotonicNs": "120613604709",
+          "phase": "started"
+        },
+        {
+          "sessionId": "wrun_01M573Q0WGCC0T4MTVJ4RPCZJD",
+          "invocationId": "eb5781ec-fb58-41ce-a550-ef885f3d5897",
+          "pid": 2463,
+          "monotonicNs": "142674939166",
+          "phase": "completed"
+        }
+      ],
+      "durationMs": 24077,
+      "sanitizedRuntimeLogSha256": "09973692dfa9bfa964ca78d2fc6d8318fac111ed31ab8b38b5de682c77cf41b7"
+    }
+  ],
+  "runtimeCompatibility": {
+    "version": "0.80.1",
+    "hashes": {
+      "dist/src/compiled/_chunks/workflow/helpers-DlLD3ov_.js": "747627feb4fc23f0bd998d2f4ca42969b6681380ded6d57fef3dd6fe5ca14903",
+      "dist/src/compiled/@workflow/core/runtime.js": "4422b829266cd9daf01d5a9b861aa5dbccf3c1a0a3ab8398da85e60e74d5397e",
+      "dist/src/compiled/@workflow/world-local/index.js": "2b049eae015887730a6b92a0fd00fd1cb099543859ed9f7490a377c1bae1a516"
+    }
+  },
+  "sourceSnapshot": {
+    "agent/agent.ts": "656bbddc7687ca5051d00cecd6d2f381956d7da81933d2f56f44aea545c5e7be",
+    "agent/channels/eve.ts": "72f674ea6d5938f324a6854495b339c380af49762b8a9787e0f83a0a6328207b",
+    "agent/instructions.md": "d4c9585a5878d3c31e6162f8e354feee7dca23f243266057788cb7974f92d7bf",
+    "agent/lib/scripted-model.ts": "7c9984410d6d7a9afd26feaf7aacf7efff42ed4fbc36f62bb44dbaa3e13cb646",
+    "agent/tools/probe.ts": "ee3fcaf5a0e8690098bf06d1fcb3e6f25b5657d22fb7f8334f511dc59e8928dc",
+    "package-lock.json": "4e76b468c6ab8276f2e275a0d78d92c22f2a65ad0e904442c89898d01fb75364",
+    "package.json": "4af2840a53dd4076a5ac4477e43a4612d22831395b97512aab5b45d5ae11218c",
+    "spike/callback-proxy.mjs": "2599c57babcf4480b4c2575136c14c83acc7323b8c133546497c3b714f14657f",
+    "spike/locked-start.py": "906255986b2f2ebfef25f045faa5077496e1029bf27dfed5af0bd474697bc3f0",
+    "spike/overlap.mjs": "033a4419593670eb2a2e98ef48673e812b68bd4d184af595d779b826edac4fd0",
+    "spike/runtime-compatibility.mjs": "679d94f9fc4300df0d7608adcd06b3674b5cc4ee7243ad4a088749a32bdee034"
+  },
+  "buildSnapshot": {
+    ".output/.eve/compile/compile-metadata.json": "439e335a1d00a11fb61a28faa6c9fdfb692316f1ce9792ba94960c8fe7545c8f",
+    ".output/.eve/compile/compiled-agent-manifest.json": "f734a78a65c2b0426048e21f829c2d52ef57e53eda656b1e12cff812581265e1",
+    ".output/.eve/compile/module-map.mjs": "14c46ecc2de6c6bb6b1fe4e2716cfd2563de8cb46b3267862e56aad7a8c45633",
+    ".output/.eve/compile/sandbox-prepared-artifacts.json": "203d437259fe8009d7d490122ac60e91d08ed91ef06b89c1eb4d7859b597af01",
+    ".output/.eve/discovery/agent-discovery-manifest.json": "5611f7695a62207afa0050919e1b35e7163279ca4534c29733120d97e529e47d",
+    ".output/.eve/discovery/diagnostics.json": "da80f36540dff5b2499b18a9654a385d8f841e02cc44f44063e8bf0fa4d51ffb",
+    ".output/eve-cache.json": "bce980de9127355bddadc93099be090dd2855905770937e22d878d22c842f62c",
+    ".output/nitro.json": "287919506eb618a5000ef6e308571002bb55ebac509b0c23ee458801b2900523",
+    ".output/server/_chunks/compiled-artifacts-instrumentation.mjs": "3312811021bcbb85871bd4745985023389b72903ca4076b9ee2acacbd6861423",
+    ".output/server/_chunks/node-server.mjs": "6828ceebdf5fe7168af00ddc2b8981a8e3624e82c1cf37f474de2bcee4edf4cd",
+    ".output/server/_chunks/storage.mjs": "f1a746ce82b50c89d559f55092f10cc2f6146877d232535474e413f944dea9d6",
+    ".output/server/_libs/@ai-sdk/gateway+[...].mjs": "2086c7118257339380da03ce510edc747bf355a1d22a68bec49e75098e840f4d",
+    ".output/server/_libs/_.mjs": "1c9fbb35bc0ae6fe6b79854b9cde11bfb4fbc3f24bc3a108cb58fc234265f29c",
+    ".output/server/_libs/_10.mjs": "f780ebe1777a59f42155e2a3c36f7e25ce45e42b86f55628dc4fada2f13f09b1",
+    ".output/server/_libs/_11.mjs": "57760dcfe55a83f4430986f4cb5b263a1adf04e9afa9c0fbc07a25db4f830094",
+    ".output/server/_libs/_12.mjs": "15cc9fa1f4d140f76c83e17ba9736742b40d053dee3235c21d854bd5b5ae37e7",
+    ".output/server/_libs/_13.mjs": "13eb7038fbd040e28dd2281632d79cb5d5ee045e65aef30be7107e94a4a5f183",
+    ".output/server/_libs/_14.mjs": "06352d798f5c62f80c6f811bc7f5e82c0584dea886fe300cd7a8e1715b079cff",
+    ".output/server/_libs/_15.mjs": "6ef35f2e39e52dc8a69a65ea4f5b862d207d37f3314c0aa3e7e16a3a96859f12",
+    ".output/server/_libs/_16.mjs": "bf8e4a33cc7d0ddddfe846b4384b267f8fde8e9f1400571d3093428f4fd6f72d",
+    ".output/server/_libs/_17.mjs": "313435d2d0b82f9fe6f6fb9df7381db6d617bfdffa1e72596b7f69a44917ba33",
+    ".output/server/_libs/_18.mjs": "1af68add3b6fbe4faec0147295c6dc56f4de6c21f24020772e2e9a0556f3c793",
+    ".output/server/_libs/_19.mjs": "30b5a5e324596973e7b602867747afe798d5fd5cf61336a8477a02bf94ef4dc5",
+    ".output/server/_libs/_2.mjs": "0cbffd0ffe07a165f22f522ccb7e8f6335ba3e6b2129c500390ca83b392aba00",
+    ".output/server/_libs/_20.mjs": "35aad4a7bfbd3c817ae10242ca42c337b9e453e16e2626c0d81209dd978dd2c6",
+    ".output/server/_libs/_21.mjs": "bb1f85b5ead7597671bf6c9240dd27d8ba852fa4a622e58067745b1c6fa9ad25",
+    ".output/server/_libs/_22.mjs": "156211adf93febe58db6ce5cf050875551dc907805c208c074ebf3e8b490d961",
+    ".output/server/_libs/_23.mjs": "e616b1118b1ea393d7622bd86496b0ac94f2c8a1baab3f03cc9d525224d1e861",
+    ".output/server/_libs/_24.mjs": "ada166a450d105f135292981689a385b0e17853061f2792c8f942640dc68c2b7",
+    ".output/server/_libs/_25.mjs": "314408977407239b8a20707814f43c637be63c22cc40b1013d3845987235c28d",
+    ".output/server/_libs/_26.mjs": "dcbb48332010277a8a0e10329c920fe5857060faf63d820d931f19c2fa529d8f",
+    ".output/server/_libs/_27.mjs": "593c87ca62c405bcdfd1dbc761c59ee16f3b9994bd180371b138b9baa94139f3",
+    ".output/server/_libs/_28.mjs": "c7cb157f3745f7a44300fb4c0702d862d6c8e25380bf68d4ad13b28fec6fbe88",
+    ".output/server/_libs/_29.mjs": "7c9e596112fb3fc5bdb7ac7f82cbb0fc1013c237da28e48b182c690093208518",
+    ".output/server/_libs/_3.mjs": "7bf9a88572fe1fd1c1a90baba91ac40ea4f772d18b0d9dbb03571a654f334540",
+    ".output/server/_libs/_30.mjs": "47bc044e8e962205579ae6f1da39d6b66bfddbbbdfa016ef9b5fb510f337c20a",
+    ".output/server/_libs/_31.mjs": "832d3d2c739ea90f0ec8e85b312f3719c5f246eee413b12c0dbaed17c9d3d0be",
+    ".output/server/_libs/_32.mjs": "38b96edefb8c669c43aaea92ad4f99168d600dcc25121e6d7477c1826f34ca18",
+    ".output/server/_libs/_33.mjs": "cb91054f92b6c5185a5af934b82de65b43e021fc43d1c733a8be15c49ad10275",
+    ".output/server/_libs/_34.mjs": "68f867d42c331d0aee48cf597e707d268be2d7c0ecabfe5921bec28a0b742014",
+    ".output/server/_libs/_35.mjs": "d7febb73fedc7ba14979ed6bea06669da3067091ec412a9ff07622440bc35bb0",
+    ".output/server/_libs/_36.mjs": "33e27b6c218a3be5e78a89072d0947d497cdc163601071ea4a0c4dd624029a26",
+    ".output/server/_libs/_37.mjs": "951b26673c8f037ca800b39e0ba63266308ff78ad95c3ac8b01c06e68d615e78",
+    ".output/server/_libs/_38.mjs": "ca1373d278f8f4494ae85a00d771c8548674d083591c9a280846b798050815f0",
+    ".output/server/_libs/_39.mjs": "65ef6be42e065cf4cd93c059f7e694fcd5a81b82c9bb9e51e5d48f8beb4ac684",
+    ".output/server/_libs/_4.mjs": "75f8a97aaf9bab145c6981f2d67c29451603b5591b166ec10da7a0686db1d329",
+    ".output/server/_libs/_5.mjs": "f73b0350e6bd84add25d63e6e4997c2beeafb4164d6bc2d2d923079411aabdd7",
+    ".output/server/_libs/_6.mjs": "39e185ac7249cec22a16e748069b40fe26172ad9e33b1462049775878ee01417",
+    ".output/server/_libs/_7.mjs": "a063587c36309913e2fc95ae581952d33aaf2907237c849e15176622a011cfde",
+    ".output/server/_libs/_8.mjs": "bf62a67cd239520c9b64b2b4f9c7181d0f0b952170c9167e23b5863eb643cd40",
+    ".output/server/_libs/_9.mjs": "2050b3cb5bfaab5534d4b3f47d19ee6c5ca492cf36b9f94e81d535560e86f775",
+    ".output/server/_libs/ai.mjs": "a14603a439793c5290015de8ee9792a160a40cd2c434784f74ffc31226a1acfa",
+    ".output/server/_libs/eve.mjs": "172b47b9dc216321ce5d80aec53fb9c4d203e281bb1827bd6001893f88ee7f9b",
+    ".output/server/_libs/h3+rou3+srvx.mjs": "2db9367c828c20b44b2ff3f6e2b5fa7ac4c3be6f872956def0209958e77c6bf3",
+    ".output/server/_libs/hookable.mjs": "747ed546544a4df9bbb1dd585a58bd6cd937c0654f558ead18b78eeb7275350f",
+    ".output/server/_libs/ufo.mjs": "8942ed3fcdedd2277c2ec1c55b2b65f318ffcce30c29cc70f43a1c70b56e53e9",
+    ".output/server/_libs/undici.mjs": "39b042a41e0cb07ad89368293350a4eb8a8172fd36f4345ba23347492ba02be6",
+    ".output/server/_libs/unstorage.mjs": "d2524638613684c31a3bbe5966214609aeec74c00413c15992c095d03a6fdf28",
+    ".output/server/_libs/vercel__oidc.mjs": "62bb3236e62e82ed356a412464e2e95cdf705ced13441517ac2c88683497810f",
+    ".output/server/_runtime.mjs": "3b7038aa0bb501a417d3126b76af8f7ba5bbcb3a23a63ed56da7e5b2e41d7d00",
+    ".output/server/_virtual/skills.json.mjs": "59ca0b0317af78086b7ba3104641aa8721318331784279bfd6042afe269afe8c",
+    ".output/server/index.mjs": "15999e7e0e48b6195d9d40bcb5f386ff4b1863e63438d5ab53f12baa99e0d0e3"
+  },
+  "outcome": "LIVE_OVERLAP_CASES_PASS",
+  "limitations": [
+    "Case1 repeats approval requests; case2 replays captured callbacks in one process",
+    "Default 860s lease is not crossed by the 22s hold",
+    "No external side effects or paid model calls"
+  ]
+}

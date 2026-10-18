@@ -2,47 +2,53 @@
 
 A public-by-design engineering laboratory for durable agent execution, human approval and reproducible failure testing.
 
-**Status: milestone-zero spike complete; implementation gate HOLD. Repository remains private.**
+**Status: runtime gate passed for a constrained single-worker implementation. The complete delivery workflow is not built yet. Repository remains private.**
 
-The planned application is one synthetic delayed-delivery workflow with three sandbox tools. The current implementation is a deliberately smaller framework probe, not that application.
+The planned application is one synthetic delayed-delivery workflow with three sandbox tools. The implemented probes test the real eve runtime with scripted model decisions, persisted state, process crashes and duplicate HTTP deliveries.
 
-## Measured finding
+## Runtime decision
 
-Pinned eve 0.80.1 retains a pending approval across a SIGKILL/restart. Its default inline step ownership lease prevents the interrupted probe from recovering within our 30-second watchdog. An explicit, source-observed experimental twenty-second lease passed the two probe cases; the interrupted tool started twice and completed once. This proves replay in those cases, not exactly-once side effects or safe production ownership.
+Continue with **eve 0.80.1, Node 24, one POSIX host and one actual worker**. The twenty-second ownership lease is an explicit source-observed experimental setting, not a stable documented public eve API. Exact dependency versions and three runtime hashes are checked before the experiments; changed bytes fail closed.
 
-The experimental override is not documented in eve's public guides. It is checked against exact dependency bytes and must not be silently adopted as a stable framework guarantee. [ADR 0001](docs/adr/0001-runtime-durability-spike.md) records the evidence, risks and HOLD before further implementation.
+The default 860-second lease misses our thirty-second interrupted-recovery target. With the explicit twenty-second setting, recovery passed locally and on Linux CI. Slow-step tests hold a real invocation for over twenty-two seconds, replay its genuine callback before and after the lease and inject a fresh wake: accepted callbacks did not create parallel tool invocations in the tested process.
 
-## Reproduce the spike
+The investigation also found and corrected our own launcher defect: the old supervisor-held lock could release while its worker survived. The current POSIX launcher execs the generated Nitro worker itself, retaining the lock in the actual worker. It does not leave an unlocked worker child. This is local ownership, not distributed fencing.
 
-Requirements: Node.js 24, npm, POSIX host (macOS/Linux), and Python 3 available at `/usr/bin/python3` with `fcntl`. Tested locally on macOS arm64 with Node 24.22.0. Windows is unsupported by this launcher.
+All four reviewers support the constrained next milestone. [ADR 0002](docs/adr/0002-single-worker-runtime-decision.md) and the [overlap review](docs/OVERLAP-REVIEW.md) record the evidence, decision and limits. The initial HOLD remains preserved as historical evidence in ADR 0001.
+
+## Reproduce
+
+Requirements: Node.js 24, npm, POSIX host (macOS/Linux), and Python 3 at `/usr/bin/python3` with `fcntl`. Local macOS arm64 and Linux x64 CI were exercised. Windows is unsupported by this launcher.
 
 ```sh
 npm ci --ignore-scripts
 npm run typecheck
+npm run format
 npm test
 npm run build
-npm run spike
-```
-
-The default spike is expected to exit 1 / NO_GO for the recovery deadline. Investigate the explicit alternative separately:
-
-```sh
 npm run spike -- --lease-seconds=20
+npm run spike:overlap -- --lease-seconds=20
+npm run spike:ownership
 ```
 
-A passing tuned experiment exits 0 and reports CONDITIONAL_GO, while the ADR's milestone-two HOLD remains in force. `--short-lease` is an additional two-second diagnostic only; it is shorter than the planned tool timeout and is unsuitable as an application default.
+The experiments generate ignored reports in `spike-results/`. They launch real isolated loopback worker processes, use ephemeral operator credentials, preserve framework state across process death and inspect independent invocation records. Child environments exclude inherited provider credentials. No account, provider key, paid model or production service is required.
 
-Each command launches real isolated server processes, waits for durable input, kills the process group, restarts against the same framework state, inspects events and checks independently recorded attempt counts. A second launcher must be rejected by the OS lock. The fixture model is scripted and does not call an LLM provider. No credentials or account are required. Temporary operator credentials are generated in memory; child environments exclude inherited provider credentials.
+`npm run spike` without the explicit lease override reproduces the known default recovery limitation and is expected to exit 1 / NO_GO. A tuned report's CONDITIONAL_GO describes that report's two cases; the final constrained implementation decision also requires overlap and actual-worker ownership tests. A green CI run reproduces the default limitation and verifies the selected explicit configuration.
 
-The report is written to ignored `spike-results/latest.json`. It includes actual configuration, source hashes, attempts, event names and failures. Published observations are stored in [evidence](docs/evidence/); they are historical observations, not claims about a changed checkout. The tool writes synthetic local attempt observations only; no idempotent external-effect service is implemented yet.
+The fixture model is scripted. The worker, runtime persistence, callback transport and process termination are real. Probe records are synthetic local observations, not a transactional effect service or exactly-once delivery guarantee. Historical and final observations have separate source hashes in [evidence](docs/evidence/).
 
-## Documentation and boundaries
+## Next implementation boundary
+
+Build the fixture workflow and independent sandbox service specified below. The application must enforce bound, single-use approvals, hard budgets and receiver-side idempotency/fencing before any effect. Repeated approval API requests can queue an extra turn, even though the tested probe ran once. A caller timeout does not prove an external action stopped.
+
+No horizontal scaling, real integrations, customer data, live-model validation or production deployment is claimed. Runtime upgrades and topology changes reopen the compatibility decision and must rerun the gates.
 
 - [Implementation specification](docs/SPECIFICATION.md)
 - [Four-agent specification validation](docs/SPECIFICATION-VALIDATION.md)
-- [Runtime gate and architecture decision](docs/adr/0001-runtime-durability-spike.md)
-- [Milestone-zero review](docs/SPIKE-REVIEW.md)
+- [Initial runtime investigation](docs/adr/0001-runtime-durability-spike.md)
+- [Accepted runtime decision](docs/adr/0002-single-worker-runtime-decision.md)
+- [Four-agent overlap review and Linux evidence](docs/OVERLAP-REVIEW.md)
 
-Eve owns orchestration/checkpoint replay; the author designed the scripted adapter, crash harness, loopback access controls and explicit evidence/decision boundary. Future application approval, budgets, idempotency and sandbox fencing remain separate responsibilities.
+Eve owns orchestration/checkpoint replay. The author designed the scripted adapter, failure/overlap harness, callback observer, actual-worker locking, access controls and explicit evidence boundaries. Application authorization and effect safety remain separate responsibilities.
 
-No original product code, customer data, production prompts or provider sessions are included. All documentation is English. Public release requires final code/history/artifact review and a later explicit owner decision. No existing product or deployment is modified.
+No original product code, customer data, production prompts or provider sessions are included. All documentation is English. Public release requires final code/history/artifact review and a later explicit owner decision. Existing products and deployments are unchanged.

@@ -1,10 +1,10 @@
 # ADR 0002: continue with a pinned, single-worker eve runtime
 
-Date: 18 October 2026. Status: proposed pending final exact-code CI and four-agent review.
+Date: 18 October 2026. Status: accepted. All four reviewers approve the constrained next milestone; exact-code Linux CI passed.
 
 ## Decision scope
 
-The proposed decision is GO for the next implementation milestone of the local, synthetic, single-host Agent Reliability Lab using eve 0.80.1 with an explicit twenty-second ownership lease. It is not production approval, public-release approval, multi-worker support or a claim that the full specification is implemented. ADR 0001's default-configuration failure remains true; this decision would supersede its HOLD only for this constrained configuration after the gates below pass.
+The decision is GO for the next implementation milestone of the local, synthetic, single-host Agent Reliability Lab using eve 0.80.1 with an explicit twenty-second ownership lease. It is not production approval, public-release approval, multi-worker support or a claim that the full specification is implemented. ADR 0001's default-configuration failure remains true; this decision supersedes its HOLD only for this constrained configuration. The required exact-code gates passed.
 
 ## What was tested
 
@@ -41,3 +41,9 @@ The twenty-second setting is source-observed and not documented as a stable publ
 Final source-bound overlap, lock-death and recovery reports plus the exact-code CI run and four-agent verdicts are recorded in docs/OVERLAP-REVIEW.md. Historical before-fix evidence remains labelled by its own source hashes. Source/build hashes identify local observations; they are not third-party attestations or power-loss durability tests.
 
 Repository visibility remains PRIVATE. This architectural decision changes neither original products nor deployments and does not authorize publication.
+
+## Ratification
+
+All four current reviewers (Codex runtime/architecture, Codex quality, Claude Code and Kimi K3) support constrained GO. Their remaining condition was fulfilled by [Linux CI run 39113383786](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39113383786) for executable-source commit 19ed1d16c5c6492a49b9a6850fd083c5d0b42dd3. Downloaded reports verify both overlap cases PASS with maximum concurrency one; all three injected callbacks return 200 and single-flight handling is observed. Actual-worker ownership/replacement PASS. Tuned interrupted recovery PASS in 21,744 ms; default interrupted recovery still fails the watchdog.
+
+Proceed to implement the next fixture-workflow milestone using these boundaries. Replacing eve is not justified by this record. This acceptance neither approves publication nor claims production guarantees. Subsequent changes in this ratification commit are documentation/evidence only.

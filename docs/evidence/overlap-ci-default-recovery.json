@@ -1,0 +1,126 @@
+{
+  "config": {
+    "ownershipLeaseSeconds": 860,
+    "override": false,
+    "status": "Source-observed experimental setting; not a stable documented public API",
+    "acceptanceWindowMs": 30000
+  },
+  "schemaVersion": 1,
+  "framework": {
+    "name": "eve",
+    "version": "0.80.1",
+    "leaseHelperSha256": "747627feb4fc23f0bd998d2f4ca42969b6681380ded6d57fef3dd6fe5ca14903"
+  },
+  "environment": {
+    "node": "v24.21.0",
+    "platform": "linux",
+    "arch": "x64",
+    "localOnly": true,
+    "model": "deterministic-test-model",
+    "inheritedCredentials": false
+  },
+  "cases": [
+    {
+      "name": "approval-survives-process-restart",
+      "status": "PASS",
+      "attempts": [
+        {
+          "phase": "started"
+        },
+        {
+          "phase": "completed"
+        }
+      ],
+      "events": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting",
+        "approval.settled",
+        "input.resolved",
+        "step.started",
+        "action.result",
+        "message.appended",
+        "message.completed",
+        "step.completed",
+        "turn.completed",
+        "session.waiting"
+      ],
+      "lockContenderExitCode": 73,
+      "initialEvents": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting"
+      ],
+      "pendingRequestPersisted": true,
+      "responseBoundary": "waiting",
+      "durationMs": 1733
+    },
+    {
+      "name": "interrupted-tool-recovery",
+      "status": "FAIL",
+      "attempts": [
+        {
+          "phase": "started"
+        }
+      ],
+      "events": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting",
+        "approval.settled",
+        "input.resolved",
+        "step.started"
+      ],
+      "lockContenderExitCode": 73,
+      "initialEvents": [
+        "session.started",
+        "turn.started",
+        "message.received",
+        "step.started",
+        "actions.requested",
+        "step.completed",
+        "input.requested",
+        "turn.waiting"
+      ],
+      "pendingRequestPersisted": false,
+      "reason": "interrupted-tool-recovery exceeded 30000ms",
+      "durationMs": 30570
+    }
+  ],
+  "runtimeCompatibility": {
+    "version": "0.80.1",
+    "hashes": {
+      "dist/src/compiled/_chunks/workflow/helpers-DlLD3ov_.js": "747627feb4fc23f0bd998d2f4ca42969b6681380ded6d57fef3dd6fe5ca14903",
+      "dist/src/compiled/@workflow/core/runtime.js": "4422b829266cd9daf01d5a9b861aa5dbccf3c1a0a3ab8398da85e60e74d5397e",
+      "dist/src/compiled/@workflow/world-local/index.js": "2b049eae015887730a6b92a0fd00fd1cb099543859ed9f7490a377c1bae1a516"
+    }
+  },
+  "sourceSnapshot": {
+    "agent/agent.ts": "656bbddc7687ca5051d00cecd6d2f381956d7da81933d2f56f44aea545c5e7be",
+    "agent/channels/eve.ts": "72f674ea6d5938f324a6854495b339c380af49762b8a9787e0f83a0a6328207b",
+    "agent/instructions.md": "d4c9585a5878d3c31e6162f8e354feee7dca23f243266057788cb7974f92d7bf",
+    "agent/lib/scripted-model.ts": "7c9984410d6d7a9afd26feaf7aacf7efff42ed4fbc36f62bb44dbaa3e13cb646",
+    "agent/tools/probe.ts": "ee3fcaf5a0e8690098bf06d1fcb3e6f25b5657d22fb7f8334f511dc59e8928dc",
+    "package-lock.json": "4e76b468c6ab8276f2e275a0d78d92c22f2a65ad0e904442c89898d01fb75364",
+    "package.json": "4af2840a53dd4076a5ac4477e43a4612d22831395b97512aab5b45d5ae11218c",
+    "spike/locked-start.py": "906255986b2f2ebfef25f045faa5077496e1029bf27dfed5af0bd474697bc3f0",
+    "spike/run.mjs": "428de3d7b2b02e91f84b54c580bb4297a21e386b3924cfcd180f72588090e925",
+    "spike/runtime-compatibility.mjs": "679d94f9fc4300df0d7608adcd06b3674b5cc4ee7243ad4a088749a32bdee034"
+  },
+  "outcome": "NO_GO"
+}
