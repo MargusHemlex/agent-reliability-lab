@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "mode": "fixture",
+  "environment": {
+    "node": "v24.21.0",
+    "platform": "linux",
+    "localOnly": true,
+    "inheritedCredentials": false
+  },
+  "cases": [
+    {
+      "name": "happy_path_duplicate_approval",
+      "status": "pass",
+      "elapsedMs": 1948,
+      "effects": 1,
+      "toolCalls": 3,
+      "operatorMissingTokenStatus": 403,
+      "operatorOriginStatus": 403,
+      "rawEveApprovalDenied": true
+    },
+    {
+      "name": "approval_persistence_response_gap_repaired",
+      "status": "pass",
+      "elapsedMs": 1853,
+      "effects": 1,
+      "approvalDecisions": 1
+    },
+    {
+      "name": "reject_before_intent_zero_effect",
+      "status": "pass",
+      "elapsedMs": 1816,
+      "effects": 0
+    },
+    {
+      "name": "cancel_before_intent_zero_effect",
+      "status": "pass",
+      "elapsedMs": 1680,
+      "effects": 0
+    },
+    {
+      "name": "stale_context_after_proposal_zero_effect",
+      "status": "pass",
+      "elapsedMs": 1751,
+      "effects": 0,
+      "reason": "stale_context"
+    },
+    {
+      "name": "expired_at_commit_reapproval_same_key",
+      "status": "pass",
+      "elapsedMs": 1881,
+      "effects": 1,
+      "reapprovals": 1,
+      "keyPreserved": true,
+      "expiredAuthorizationEffects": 0
+    },
+    {
+      "name": "approval_wait_survives_worker_restart",
+      "status": "pass",
+      "elapsedMs": 21882,
+      "effects": 1,
+      "proposalPreserved": true
+    },
+    {
+      "name": "crash_before_dispatch",
+      "status": "pass",
+      "elapsedMs": 21830,
+      "effects": 1,
+      "recoveryMs": 20102,
+      "keyPreserved": true
+    },
+    {
+      "name": "crash_after_sandbox_commit_before_checkpoint",
+      "status": "pass",
+      "elapsedMs": 22791,
+      "effects": 1,
+      "recoveryMs": 21053,
+      "keyPreserved": true
+    },
+    {
+      "name": "unknown_outcome_absent_receipt_same_key_redispatch",
+      "status": "pass",
+      "elapsedMs": 22866,
+      "effects": 1,
+      "keyPreserved": true,
+      "reconciledAbsentReceipt": true
+    },
+    {
+      "name": "cancel_after_commit_expiry_confirmation_zero_effect",
+      "status": "pass",
+      "elapsedMs": 1827,
+      "effects": 0,
+      "terminalState": "cancelled",
+      "approvalReplayBlocked": true
+    }
+  ],
+  "sourceSnapshot": {
+    "agent/agent.ts": "a3cc2f4b28153b8610c4c64934f124efd6a55bf3ffb626a81a5df50ee3615e87",
+    "agent/channels/eve.ts": "72f674ea6d5938f324a6854495b339c380af49762b8a9787e0f83a0a6328207b",
+    "agent/channels/lab.ts": "68e5bef7ac08be0629d81556f0b87b699ab117082321f703952e66613eb11d8d",
+    "agent/instructions.md": "9caf2fe4552f518b40812f03cc3ee0544a18e354a3547d595f679e98fb4dde1c",
+    "agent/lib/lab/contracts.ts": "62b065836a6e933327339586a454e1596798e7e36292b6b1c7f9e08d4c87dfe0",
+    "agent/lib/lab/fixture-model.ts": "1eeb5744af69c9999c77565bf8e36226166affc988b654ed7666b0c0c2957748",
+    "agent/lib/lab/runtime.ts": "907d82b6fa6065e85834f9feb7e42e61883cfcd3ca7de6a0e0dd25080dee8f4b",
+    "agent/lib/lab/store.ts": "8b4489d3e26aa8c3f6884f0578d89249bfeb80c81069c821486b03d0622eeb3d",
+    "agent/lib/lab/workflow.ts": "53e9239a74d8f9ccd93d87c96cfd4afde12ee9a4d87f5907452ca9b138351aae",
+    "agent/lib/scripted-model.ts": "919b1fea12fa672dcf33f840366b67f4bfde4c23e4e799fc0d97d80d9bdeccdf",
+    "agent/tools/delivery.ts": "8bfa49c32e6d4f4d587d2c163a2a124aaef5054c2ac7bbab209a65904d3839ec",
+    "agent/tools/probe.ts": "0bf801c44ee56697fe88ba022b4ca9c7107beec5d08db82b41b515d7488c897e",
+    "sandbox/server.ts": "67c51cf5c3127596a7867aba7786cb48ecb631a0d09bec7eb2859e3d6e79bf67",
+    "sandbox/service.ts": "b86342a598fb793c66bb14929625c3ab53865f6d96073e155a99bb1f50d2c775",
+    "lab/cli.mjs": "eaecfe6592e90836d5538f5ac6bcb1649e18fabb55f66e87a3a4dae6c9bf2c73",
+    "lab/worker-entry.mjs": "b5cccc1e02aa320ee34e289dc5e471c24ff452a10fd64ae74dda48dc56ce4a95",
+    "test/workflow.mjs": "c2a5af029c24f35204c1b49baa4b63c408c027c4e8592c490ecb456e29e01add",
+    "spike/locked-start.py": "3ed28b3f299a293d984098eab7efba0f7a761dade12ade8c3cb0565f4fc47a9c",
+    "package.json": "476cac00a9839e0a667b94c6ecf261f5146a3b7c4884513506ab90492a4f4d29",
+    "package-lock.json": "4e76b468c6ab8276f2e275a0d78d92c22f2a65ad0e904442c89898d01fb75364"
+  }
+}

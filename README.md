@@ -2,11 +2,11 @@
 
 A public-by-design engineering laboratory for durable agent execution, human approval and reproducible failure testing.
 
-**Status: milestone 2 fixture workflow implemented; nine process-based cases and 21 unit/service tests pass locally; four-agent review and Linux CI are in progress. Repository remains private.**
+**Status: milestone 2 fixture workflow implemented; eleven process-based cases and 24 unit/service tests pass locally; all four reviewers accept this scoped milestone and exact-code Linux CI passes. Repository remains private.**
 
 One synthetic delayed-delivery workflow reads delivery status, reads a versioned policy and records an approved resolution through exactly three tools. The worker, application database, separate sandbox HTTP service and effect database are real. Model decisions are scripted fixture decisions; no live model is called.
 
-Start with the [milestone 2 walkthrough and architecture](docs/MILESTONE-2.md).
+Start with the [milestone 2 walkthrough and architecture](docs/MILESTONE-2.md) and [four-agent review with Linux evidence](docs/MILESTONE-2-REVIEW.md).
 
 ## Runtime decision
 
@@ -65,7 +65,7 @@ Initialization stores randomly generated local credentials in ignored `.local/la
 npm run test:workflow
 ```
 
-This process harness exercises real worker termination/restart against the independent sandbox and writes ignored `reports/workflow.json`. All nine cases passed locally, including stale context, expiry/reapproval, approval replay and both crash barriers. Recovery took 22,015 ms before dispatch and 20,365 ms after sandbox commit, with one effect in each successful case. [Recorded local observations](docs/evidence/milestone-2-local.json) include source hashes; these are single samples, not reliability statistics. Unit/service tests and runtime compatibility probes are separate checks. See [milestone 2](docs/MILESTONE-2.md) for the acceptance boundary and remaining work.
+This process harness exercises real worker termination/restart against the independent sandbox and writes ignored `reports/workflow.json`. All eleven cases passed locally, including stale context, expiry/reapproval, approval replay and both crash barriers. Recovery took 20,593 ms before dispatch and 20,548 ms after sandbox commit, with one effect in each successful case. [Recorded local observations](docs/evidence/milestone-2-local.json) include source hashes; these are single samples, not reliability statistics. Unit/service tests and runtime compatibility probes are separate checks. See [milestone 2](docs/MILESTONE-2.md) for the acceptance boundary and remaining work.
 
 ## Scope and next milestones
 
