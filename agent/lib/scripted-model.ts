@@ -46,6 +46,9 @@ function result(options: {
       epoch,
       inputTokens: null,
       outputTokens: null,
+      outcome: process.env.ARL_FAULT_TOOL_NAME
+        ? "fixture_forbidden_tool_requested"
+        : "completed",
     });
     return { ...decision, usage, warnings: [] };
   }

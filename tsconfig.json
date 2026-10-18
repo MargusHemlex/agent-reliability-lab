@@ -10,5 +10,10 @@
     "lib": ["ES2023", "DOM"],
     "allowImportingTsExtensions": true
   },
-  "include": ["agent/**/*.ts", "sandbox/**/*.ts", "lab/**/*.ts"]
+  "include": [
+    "agent/**/*.ts",
+    "sandbox/**/*.ts",
+    "lab/**/*.ts",
+    "evaluation/**/*.ts"
+  ]
 }

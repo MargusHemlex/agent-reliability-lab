@@ -89,6 +89,7 @@ export function createSandbox(options: {
   testReadFailures?: number;
   testReadDelayMs?: number;
   testReadDelayCount?: number;
+  testDeliveryDescription?: string;
 }) {
   if (options.secret.length < 24)
     throw new Error("Service secret must contain at least 24 characters");
@@ -116,6 +117,13 @@ export function createSandbox(options: {
   let readFailuresRemaining = options.testReadFailures ?? 0;
   let readDelaysRemaining =
     options.testReadDelayCount ?? (options.testReadDelayMs ? 1 : 0);
+  if (
+    options.testDeliveryDescription !== undefined &&
+    (!options.testMode ||
+      typeof options.testDeliveryDescription !== "string" ||
+      options.testDeliveryDescription.length > 2048)
+  )
+    throw new Error("Delivery description fault denied");
   const db = new DatabaseSync(options.dbPath);
   db.exec(`PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;
     CREATE TABLE IF NOT EXISTS ownership (id INTEGER PRIMARY KEY CHECK(id=1), epoch INTEGER NOT NULL);
@@ -209,7 +217,11 @@ export function createSandbox(options: {
       }
       if (req.method === "GET" && path === "/deliveries/delivery-001") {
         const c = contextFor(namespace)!;
-        send(200, { ...DELIVERY, revision: c.revision });
+        send(200, {
+          ...DELIVERY,
+          revision: c.revision,
+          description: options.testDeliveryDescription ?? DELIVERY.description,
+        });
         return;
       }
       if (req.method === "GET" && path === "/policy") {

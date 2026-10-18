@@ -21,7 +21,37 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const children = new Set();
+export function liveChildPids() {
+  return [...children]
+    .filter((child) => child.exitCode === null && child.signalCode === null)
+    .map((child) => child.pid);
+}
 const dirs = [];
+const caseEvidence = [];
+/** Drain persisted per-fixture counters after each scenario has stopped. */
+export function takeCaseEvidence() {
+  const runs = caseEvidence.splice(0);
+  if (!runs.length)
+    return {
+      attempts: {
+        modelTurns: null,
+        toolCalls: null,
+        readAttempts: null,
+        dispatchAttempts: null,
+      },
+    };
+  return {
+    attempts: {
+      modelTurns: runs.reduce((sum, run) => sum + run.budget.modelTurns, 0),
+      toolCalls: runs.reduce((sum, run) => sum + run.toolCalls, 0),
+      readAttempts: runs.reduce(
+        (sum, run) => sum + Object.keys(run.budget.reads).length,
+        0,
+      ),
+      dispatchAttempts: null,
+    },
+  };
+}
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 export async function until(fn, label, timeout = 30000) {
   const start = Date.now();
@@ -83,6 +113,9 @@ export async function fixture({
   clock = false,
   readFailures,
   readDelayMs,
+  deliveryDescription,
+  fixtureToolName,
+  sourceRoot = root,
 } = {}) {
   const app = await mkdtemp(
     join(process.env.TMPDIR ?? "/tmp", "arl-workflow-"),
@@ -97,8 +130,12 @@ export async function fixture({
     "package.json",
     "package-lock.json",
   ])
-    await cp(join(root, p), join(app, p), { recursive: true });
-  await symlink(join(root, "node_modules"), join(app, "node_modules"), "dir");
+    await cp(join(sourceRoot, p), join(app, p), { recursive: true });
+  await symlink(
+    join(sourceRoot, "node_modules"),
+    join(app, "node_modules"),
+    "dir",
+  );
   await mkdir(join(app, "home"));
   await mkdir(join(app, "worker-barrier"));
   await mkdir(join(app, "service-barrier"));
@@ -135,6 +172,12 @@ export async function fixture({
     ...(readDelayMs === undefined
       ? {}
       : { ARL_FAULT_READ_DELAY_MS: String(readDelayMs) }),
+    ...(deliveryDescription === undefined
+      ? {}
+      : { ARL_FAULT_DELIVERY_DESCRIPTION: deliveryDescription }),
+    ...(fixtureToolName === undefined
+      ? {}
+      : { ARL_FAULT_TOOL_NAME: fixtureToolName }),
     ...(before ? { ARL_LAB_BARRIER_DIR: join(app, "worker-barrier") } : {}),
     ...(after ? { ARL_SERVICE_BARRIER_DIR: join(app, "service-barrier") } : {}),
   };
@@ -210,6 +253,7 @@ export async function fixture({
       return result.status === 200 && result;
     }, "approval API readiness");
   };
+  let evidenceCaptured = false;
   return {
     app,
     env,
@@ -221,6 +265,35 @@ export async function fixture({
     approve,
     inspect,
     effectCount,
+    sandbox: async (path, body, namespace = "default") => {
+      const response = await fetch(env.ARL_SERVICE_URL + path, {
+        method: body === undefined ? "GET" : "POST",
+        headers: {
+          authorization: `Bearer ${secret}`,
+          "x-arl-namespace": namespace,
+          ...(body === undefined ? {} : { "content-type": "application/json" }),
+        },
+        body: body === undefined ? undefined : JSON.stringify(body),
+        signal: AbortSignal.timeout(5000),
+      });
+      return { status: response.status, body: await response.json() };
+    },
+    competingWorker: async () => {
+      const candidate = launch(
+        "/usr/bin/python3",
+        ["spike/locked-start.py", process.execPath, String(await freePort())],
+        app,
+        env,
+      );
+      const code = await Promise.race([
+        new Promise((resolve) => candidate.child.once("exit", resolve)),
+        sleep(3000).then(() => {
+          throw new Error("competing worker did not reject ownership");
+        }),
+      ]);
+      children.delete(candidate.child);
+      return code;
+    },
     assertAccessBoundaries: async (sessionId) => {
       const missing = await fetch(host + "/lab/runs", {
         signal: AbortSignal.timeout(3000),
@@ -263,6 +336,18 @@ export async function fixture({
     restart: start,
     stop: async () => {
       await kill(worker.child);
+      if (!evidenceCaptured) {
+        // A read-only connection inspects persisted records after the worker exits.
+        // Query all namespace runs to include browser/API-created runs as well.
+        const db = new DatabaseSync(env.ARL_LAB_DB, { readOnly: true });
+        try {
+          const rows = db.prepare("SELECT data FROM runs ORDER BY id").all();
+          for (const row of rows) caseEvidence.push(JSON.parse(row.data));
+          evidenceCaptured = true;
+        } finally {
+          db.close();
+        }
+      }
       await kill(server.child);
     },
   };

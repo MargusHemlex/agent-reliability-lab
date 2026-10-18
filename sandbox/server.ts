@@ -16,6 +16,7 @@ const sandbox = createSandbox({
   dbPath: process.env.ARL_SANDBOX_DB,
   secret: process.env.ARL_SERVICE_SECRET,
   testMode,
+  testDeliveryDescription: process.env.ARL_FAULT_DELIVERY_DESCRIPTION,
   ...(process.env.ARL_FAULT_READ_FAILURES !== undefined
     ? { testReadFailures: Number(process.env.ARL_FAULT_READ_FAILURES) }
     : {}),

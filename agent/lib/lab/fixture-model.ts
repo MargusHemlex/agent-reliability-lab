@@ -30,11 +30,19 @@ export function fixtureDecision(prompt: unknown) {
       }
   }
   if (!runId) throw new Error("Fixture requires an application-created run");
-  const toolName = !completed.has("get_delivery")
-    ? "get_delivery"
-    : !completed.has("get_resolution_policy")
-      ? "get_resolution_policy"
-      : "record_resolution";
+  const forcedTool = process.env.ARL_FAULT_TOOL_NAME;
+  if (
+    forcedTool !== undefined &&
+    (process.env.ARL_TEST_MODE !== "1" || forcedTool !== "forbidden_tool")
+  )
+    throw new Error("test_tool_fault_denied");
+  const toolName =
+    forcedTool ??
+    (!completed.has("get_delivery")
+      ? "get_delivery"
+      : !completed.has("get_resolution_policy")
+        ? "get_resolution_policy"
+        : "record_resolution");
   const input =
     toolName === "record_resolution"
       ? {

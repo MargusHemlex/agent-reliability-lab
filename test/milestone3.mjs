@@ -6,7 +6,12 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { DatabaseSync } from "node:sqlite";
 import { AppStore } from "../agent/lib/lab/store.ts";
-import { fixture, until, cleanup } from "./workflow-fixture.mjs";
+import {
+  fixture,
+  until,
+  cleanup,
+  takeCaseEvidence,
+} from "./workflow-fixture.mjs";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const report = {
   schemaVersion: 1,
@@ -45,19 +50,23 @@ async function runCase(name, fn) {
   const start = Date.now();
   try {
     const details = await fn();
+    const persisted = takeCaseEvidence();
     report.cases.push({
       name,
       status: "pass",
       elapsedMs: Date.now() - start,
+      ...persisted,
       ...details,
     });
     console.log(`${name}: PASS`);
   } catch (error) {
+    const persisted = takeCaseEvidence();
     report.cases.push({
       name,
       status: "fail",
       elapsedMs: Date.now() - start,
       error: error.message,
+      ...persisted,
     });
     throw error;
   }

@@ -124,6 +124,19 @@ export async function recordResolution(
     { runId, action },
     callId,
   );
+  if (!run.intent && run.approval && now() >= run.approval.expiresAt) {
+    store().fail(runId, "authorization_expired_before_intent", now(), epoch);
+    return finish(
+      runId,
+      attempt,
+      {
+        mode: "fixture",
+        status: "failed",
+        reason: "authorization_expired_before_intent",
+      },
+      "denied",
+    );
+  }
   const intent = ResolutionSchema.parse(
     store().createDispatch(runId, { now: now(), epoch }),
   );
@@ -131,7 +144,10 @@ export async function recordResolution(
     if (process.env.ARL_TEST_MODE !== "1")
       throw new Error("test_barrier_denied");
     const dir = process.env.ARL_LAB_BARRIER_DIR;
-    writeFileSync(join(dir, "dispatch_ready"), intent.key);
+    writeFileSync(
+      join(dir, "dispatch_ready"),
+      JSON.stringify({ barrier: "before-dispatch-v1", key: intent.key }),
+    );
     while (!existsSync(join(dir, "release")))
       await new Promise((r) => setTimeout(r, 25));
   }

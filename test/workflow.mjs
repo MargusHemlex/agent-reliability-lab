@@ -53,24 +53,33 @@ for (const p of [
   report.sourceSnapshot[p] = createHash("sha256")
     .update(await readFile(join(root, p)))
     .digest("hex");
-import { fixture, until, cleanup } from "./workflow-fixture.mjs";
+import {
+  fixture,
+  until,
+  cleanup,
+  takeCaseEvidence,
+} from "./workflow-fixture.mjs";
 async function runCase(name, fn) {
   const started = Date.now();
   try {
     const details = await fn();
+    const persisted = takeCaseEvidence();
     report.cases.push({
       name,
       status: "pass",
       elapsedMs: Date.now() - started,
+      ...persisted,
       ...details,
     });
     console.log(`${name}: PASS`);
   } catch (error) {
+    const persisted = takeCaseEvidence();
     report.cases.push({
       name,
       status: "fail",
       elapsedMs: Date.now() - started,
       error: error.message,
+      ...persisted,
     });
     throw error;
   }
@@ -272,7 +281,12 @@ try {
       );
       assert.equal(done.run.intent.key, intent.key);
       assert.equal(f.effectCount(), 1);
-      return { effects: 1, recoveryMs: Date.now() - start, keyPreserved: true };
+      const recoveryMs = Date.now() - start;
+      assert.ok(
+        recoveryMs <= 30000,
+        "crash recovery including restart must finish within 30 seconds",
+      );
+      return { effects: 1, recoveryMs, keyPreserved: true };
     } finally {
       await f.stop();
     }
@@ -306,7 +320,12 @@ try {
       assert.equal(done.run.intent.key, pending.run.intent.key);
       assert.equal(f.effectCount(), 1);
       assert.ok(done.run.receipt);
-      return { effects: 1, recoveryMs: Date.now() - start, keyPreserved: true };
+      const recoveryMs = Date.now() - start;
+      assert.ok(
+        recoveryMs <= 30000,
+        "crash recovery including restart must finish within 30 seconds",
+      );
+      return { effects: 1, recoveryMs, keyPreserved: true };
     } finally {
       await f.stop();
     }

@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "fixtureVersion": "synthetic-delivery-support-v1",
+  "mode": "fixture",
+  "cases": [
+    {
+      "id": "happy_path_duplicate_approval",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "approval_persistence_response_gap_repaired",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "reject_before_intent_zero_effect",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "cancel_before_intent_zero_effect",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "stale_context_after_proposal_zero_effect",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "expired_at_commit_reapproval_same_key",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "approval_wait_survives_worker_restart",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "crash_before_dispatch",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "crash_after_sandbox_commit_before_checkpoint",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "unknown_outcome_absent_receipt_same_key_redispatch",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "cancel_after_commit_expiry_confirmation_zero_effect",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "model_turn_limit_stops_before_write",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "requested_token_limit_stops_first_model",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "tool_call_limit_stops_approved_write",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "approval_wait_excluded_from_active_budget",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "active_budget_survives_crash_and_blocks_dispatch",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "committed_receipt_reconciles_after_active_exhaustion",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "retryable_reads_succeed_on_third_attempt",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "read_retry_budget_stops_fourth_request",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "read_timeout_then_recovery_within_tool_deadline",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "namespace_reset_preserves_existing_run_and_events",
+      "expectedEffects": 2,
+      "kind": "scenario"
+    },
+    {
+      "id": "operator_cookie_csrf_and_real_approved_workflow",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "expired_before_intent_zero_effect",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "changed_policy_after_proposal_zero_effect",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "prompt_injection_cannot_approve_or_change_action",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "disallowed_tool_fails_without_effect",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "concurrent_dispatch_same_key_one_effect",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "cancel_after_accepted_intent_preserves_truthful_success",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "stale_worker_epoch_denies_new_commit",
+      "expectedEffects": 0,
+      "kind": "scenario"
+    },
+    {
+      "id": "digest_conflict_is_permanent_and_preserves_first_effect",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "exclusive_worker_ownership_rejects_second_process",
+      "expectedEffects": 1,
+      "kind": "scenario"
+    },
+    {
+      "id": "negative_idempotency_mutant_detected",
+      "expectedEffects": null,
+      "kind": "negative_control",
+      "mutant": "idempotency_disabled",
+      "expectedViolation": "duplicate_effect"
+    },
+    {
+      "id": "negative_approval_mutant_detected",
+      "expectedEffects": null,
+      "kind": "negative_control",
+      "mutant": "approval_disabled",
+      "expectedViolation": "unauthorized_effect"
+    }
+  ]
+}
