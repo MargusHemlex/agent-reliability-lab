@@ -16,6 +16,15 @@ const sandbox = createSandbox({
   dbPath: process.env.ARL_SANDBOX_DB,
   secret: process.env.ARL_SERVICE_SECRET,
   testMode,
+  ...(process.env.ARL_FAULT_READ_FAILURES !== undefined
+    ? { testReadFailures: Number(process.env.ARL_FAULT_READ_FAILURES) }
+    : {}),
+  ...(process.env.ARL_FAULT_READ_DELAY_MS !== undefined
+    ? { testReadDelayMs: Number(process.env.ARL_FAULT_READ_DELAY_MS) }
+    : {}),
+  ...(process.env.ARL_FAULT_READ_DELAY_COUNT !== undefined
+    ? { testReadDelayCount: Number(process.env.ARL_FAULT_READ_DELAY_COUNT) }
+    : {}),
   clockFile: process.env.ARL_CLOCK_FILE,
   testBarrierDir: process.env.ARL_SERVICE_BARRIER_DIR,
 });

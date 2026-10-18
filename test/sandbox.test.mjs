@@ -292,3 +292,135 @@ test("after-commit barrier holds response outside the transaction while reconcil
     /explicit test mode/,
   );
 });
+
+test("namespace reset seeds independent context and preserves prior receipts and context", async (t) => {
+  const f = await fixture(t);
+  assert.equal((await f.request("/resolutions", f.input)).status, 201);
+  f.mutate("UPDATE context SET revision=9,policy_version=7 WHERE id=1");
+  assert.equal(
+    (await f.request("/namespaces", { namespace: "fresh-001" })).status,
+    200,
+  );
+  const headers = { "x-arl-namespace": "fresh-001" };
+  assert.equal(
+    (await f.request("/deliveries/delivery-001", undefined, headers)).body
+      .revision,
+    1,
+  );
+  assert.equal(
+    (await f.request("/policy", undefined, headers)).body.version,
+    1,
+  );
+  assert.equal((await f.request("/deliveries/delivery-001")).body.revision, 9);
+  assert.equal((await f.request("/policy")).body.version, 7);
+  assert.equal(
+    (await f.request("/receipts/" + f.input.key, undefined, headers)).status,
+    404,
+  );
+  assert.equal((await f.request("/receipts/" + f.input.key)).status, 200);
+  assert.equal((await f.request("/resolutions", f.input, headers)).status, 409);
+  const next = {
+    ...f.input,
+    key: "namespace-new-intent",
+    runId: "namespace-new-run",
+  };
+  assert.equal((await f.request("/resolutions", next, headers)).status, 201);
+  assert.equal((await f.request("/receipts/" + next.key)).status, 404);
+  assert.equal(f.count(), 2);
+  f.mutate(
+    "UPDATE namespaced_context SET revision=3 WHERE namespace='fresh-001'",
+  );
+  assert.equal(
+    (await f.request("/namespaces", { namespace: "fresh-001" })).status,
+    200,
+  );
+  assert.equal(
+    (await f.request("/deliveries/delivery-001", undefined, headers)).body
+      .revision,
+    3,
+  );
+  assert.equal(
+    (await f.request("/policy", undefined, { "x-arl-namespace": "missing" }))
+      .status,
+    404,
+  );
+  assert.equal(
+    (await f.request("/namespaces", { namespace: "../bad" })).status,
+    400,
+  );
+  assert.equal(
+    (await f.request("/policy", undefined, { "x-arl-namespace": "../bad" }))
+      .status,
+    400,
+  );
+  await f.restart();
+  assert.equal(
+    (await f.request("/receipts/" + next.key, undefined, headers)).status,
+    200,
+  );
+  assert.equal(
+    (await f.request("/deliveries/delivery-001", undefined, headers)).body
+      .revision,
+    3,
+  );
+});
+
+test("read fault configuration is gated and bounded", () => {
+  for (const options of [
+    { testReadFailures: 0 },
+    { testReadDelayMs: 0 },
+    { testReadDelayCount: 0 },
+  ])
+    assert.throws(
+      () => createSandbox({ dbPath: ":memory:", secret, ...options }),
+      /explicit test mode/,
+    );
+  for (const options of [
+    { testReadFailures: -1 },
+    { testReadFailures: 101 },
+    { testReadDelayMs: 30001 },
+    { testReadDelayMs: NaN },
+    { testReadDelayCount: -1 },
+    { testReadDelayCount: 101 },
+  ])
+    assert.throws(
+      () =>
+        createSandbox({
+          dbPath: ":memory:",
+          secret,
+          testMode: true,
+          ...options,
+        }),
+      /Invalid read fault/,
+    );
+});
+test("synthetic service emits two transient read failures then succeeds on third attempt", async (t) => {
+  const service = createSandbox({
+    dbPath: ":memory:",
+    secret,
+    testMode: true,
+    testReadFailures: 2,
+    testReadDelayMs: 5,
+    testReadDelayCount: 3,
+  });
+  await service.listen();
+  t.after(() => service.close());
+  const url = "http://127.0.0.1:" + service.address().port;
+  const headers = { authorization: "Bearer " + secret };
+  const start = Date.now();
+  assert.equal(
+    (await fetch(url + "/deliveries/delivery-001", { headers })).status,
+    503,
+  );
+  assert.equal((await fetch(url + "/policy", { headers })).status, 503);
+  assert.equal(
+    (await fetch(url + "/deliveries/delivery-001", { headers })).status,
+    200,
+  );
+  assert.equal((await fetch(url + "/policy", { headers })).status, 200);
+  assert.ok(Date.now() - start >= 15);
+  assert.equal(
+    service.db.prepare("SELECT count(*) AS n FROM effects").get().n,
+    0,
+  );
+});

@@ -75,3 +75,25 @@ export function assertFixtureTools(tools: unknown) {
   )
     throw new Error("Unexpected fixture tool surface");
 }
+
+export function fixtureRunId(prompt: unknown): string {
+  let runId: string | undefined;
+  for (const message of prompt as Array<{ role: string; content: unknown }>) {
+    if (message.role !== "user" || !Array.isArray(message.content)) continue;
+    for (const part of message.content)
+      if (part.type === "text") {
+        try {
+          const data = JSON.parse(part.text);
+          if (
+            typeof data.runId === "string" &&
+            /^[A-Za-z0-9_-]{1,128}$/.test(data.runId)
+          )
+            runId = data.runId;
+        } catch {
+          /* Fixed application messages only. */
+        }
+      }
+  }
+  if (!runId) throw new Error("Fixture requires an application-created run");
+  return runId;
+}

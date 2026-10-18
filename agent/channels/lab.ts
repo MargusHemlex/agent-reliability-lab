@@ -1,3 +1,6 @@
+import { currentNamespace, resetNamespace } from "../lib/lab/namespaces.ts";
+import { validateLimits } from "../lib/lab/limits.ts";
+import { reconcileRun } from "../lib/lab/workflow.ts";
 import { defineChannel, GET, POST, type Session } from "eve/channels";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
@@ -36,6 +39,15 @@ const guarded =
       );
     }
   };
+function inspectRun(runId: string) {
+  const run = store().getRun(runId);
+  if (
+    !["succeeded", "failed", "cancelled"].includes(run.state) &&
+    (run.budget.activeSince !== null || now() >= run.deadline)
+  )
+    store().settleActive(runId, { now: now(), epoch: config().epoch });
+  return store().getRun(runId);
+}
 async function pending(session: Session) {
   const stream = await session.getEventStream({ follow: false });
   const reader = stream.getReader();
@@ -59,10 +71,25 @@ async function pending(session: Session) {
 }
 export default defineChannel({
   routes: [
+    POST(
+      "/lab/namespaces/reset",
+      guarded(async (request) => {
+        z.object({})
+          .strict()
+          .parse(await jsonBody(request));
+        return response({ mode: "fixture", namespace: await resetNamespace() });
+      }),
+    ),
     GET(
       "/lab/runs",
       guarded(async () =>
-        response({ mode: "fixture", runs: store().listRuns() }),
+        response({
+          mode: "fixture",
+          activeNamespace: currentNamespace(),
+          runs: store()
+            .listRuns()
+            .map((run) => inspectRun(run.runId)),
+        }),
       ),
     ),
     GET(
@@ -71,7 +98,7 @@ export default defineChannel({
         RUN_ID.parse(params.runId);
         return response({
           mode: "fixture",
-          run: store().getRun(params.runId),
+          run: inspectRun(params.runId),
           events: store().getEvents(params.runId),
         });
       }),
@@ -79,13 +106,22 @@ export default defineChannel({
     POST(
       "/lab/runs",
       guarded(async (request, { from }) => {
-        z.object({ deliveryId: z.literal("delivery-001") })
+        const input = z
+          .object({
+            deliveryId: z.literal("delivery-001"),
+            limits: z
+              .record(z.string(), z.number().int().positive())
+              .optional(),
+          })
           .strict()
           .parse(await jsonBody(request));
+        const limits = validateLimits(input.limits);
         const runId = randomUUID();
         store().createRun({
           runId,
           deliveryId: "delivery-001",
+          namespace: String(currentNamespace().id),
+          limits,
           epoch: config().epoch,
           now: now(),
         });
@@ -195,6 +231,16 @@ export default defineChannel({
           !["executing", "unknown_outcome"].includes(run.state)
         )
           throw new Error("resume denied");
+        const reconciliation = await reconcileRun(run.runId);
+        if (
+          reconciliation.status === "succeeded" ||
+          store().getRun(run.runId).budget.exhausted
+        )
+          return response({
+            mode: "fixture",
+            run: store().getRun(run.runId),
+            reconciliation,
+          });
         await from(run.runId).send(
           JSON.stringify({
             runId: run.runId,

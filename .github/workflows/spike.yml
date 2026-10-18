@@ -7,7 +7,7 @@ permissions:
 jobs:
   local-spike:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     env:
       EVE_TELEMETRY_DISABLED: '1'
     steps:
@@ -23,6 +23,8 @@ jobs:
       - run: npm run build
       - name: Synthetic workflow and independent service
         run: npm run test:workflow
+      - name: Operator UI and durable budget enforcement
+        run: npm run test:milestone3
       - name: Reproduce default-runtime limitation
         shell: bash
         run: |
@@ -48,4 +50,5 @@ jobs:
           path: |
             spike-results/*.json
             reports/workflow.json
+            reports/milestone3.json
           retention-days: 7

@@ -97,17 +97,24 @@ export class ServiceError extends Error {
     this.status = status;
   }
 }
-export async function service(path: string, data?: unknown): Promise<unknown> {
+export async function service(
+  path: string,
+  data?: unknown,
+  options: { namespace?: string; timeoutMs?: number } = {},
+): Promise<unknown> {
   const cfg = config();
   const response = await fetch(cfg.serviceURL + path, {
     method: data === undefined ? "GET" : "POST",
     headers: {
       authorization: `Bearer ${cfg.serviceSecret}`,
+      "x-arl-namespace": options.namespace ?? "default",
       ...(data === undefined ? {} : { "content-type": "application/json" }),
     },
     body: data === undefined ? undefined : JSON.stringify(data),
     redirect: "error",
-    signal: AbortSignal.timeout(10000),
+    signal: AbortSignal.timeout(
+      Math.max(1, Math.floor(Math.min(10000, options.timeoutMs ?? 10000))),
+    ),
   });
   const reader = response.body!.getReader();
   const chunks: Uint8Array[] = [];
@@ -134,10 +141,12 @@ export async function service(path: string, data?: unknown): Promise<unknown> {
     );
   return body;
 }
-export async function receipt(key: string) {
+export async function receipt(key: string, namespace = "default") {
   RUN_ID.parse(key);
   try {
-    return ReceiptSchema.parse(await service(`/receipts/${key}`));
+    return ReceiptSchema.parse(
+      await service(`/receipts/${key}`, undefined, { namespace }),
+    );
   } catch (error) {
     if (error instanceof ServiceError && error.status === 404) return null;
     throw error;

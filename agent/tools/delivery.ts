@@ -22,6 +22,7 @@ export default defineDynamic({
                   runId,
                   ctx.session.id,
                   ctx.session.auth.current?.attributes.runId,
+                  ctx.callId,
                 ),
             }),
             get_resolution_policy: defineTool({
@@ -33,6 +34,7 @@ export default defineDynamic({
                   runId,
                   ctx.session.id,
                   ctx.session.auth.current?.attributes.runId,
+                  ctx.callId,
                 ),
             }),
             record_resolution: defineTool({
@@ -61,6 +63,7 @@ export default defineDynamic({
                   action,
                   ctx.session.id,
                   ctx.session.auth.current?.attributes.runId,
+                  ctx.callId,
                 ),
             }),
           }

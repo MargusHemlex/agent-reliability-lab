@@ -120,6 +120,7 @@ async function serve(cfg) {
       event: "fixture_lab_starting",
       mode: "fixture",
       worker: `http://127.0.0.1:${cfg.workerPort}`,
+      operator: `http://127.0.0.1:${cfg.workerPort}/operator`,
       service: `http://127.0.0.1:${cfg.servicePort}`,
       credentials: "local ignored configuration; never printed",
     });
@@ -170,6 +171,12 @@ try {
       mode: "fixture",
       secrets: "stored locally and excluded from Git",
     });
+  } else if (command === "operator-secret") {
+    if (args.length) throw new Error("operator-secret takes no arguments");
+    console.log((await readConfig()).operatorSecret);
+  } else if (command === "reset") {
+    if (args.length) throw new Error("reset takes no arguments");
+    print(await api(await readConfig(), "/lab/namespaces/reset", {}));
   } else if (command === "serve") {
     if (args.length) throw new Error("serve takes no arguments");
     await serve(await readConfig());
@@ -200,6 +207,8 @@ try {
     print({
       usage: [
         "init",
+        "operator-secret",
+        "reset",
         "serve",
         "run",
         "list",

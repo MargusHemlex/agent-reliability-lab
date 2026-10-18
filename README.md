@@ -2,11 +2,11 @@
 
 A public-by-design engineering laboratory for durable agent execution, human approval and reproducible failure testing.
 
-**Status: milestone 2 fixture workflow implemented; eleven process-based cases and 24 unit/service tests pass locally; all four reviewers accept this scoped milestone and exact-code Linux CI passes. Repository remains private.**
+**Status: milestone 3 operator UI and durable fixture budgets implemented; final validation is in progress. Repository remains private.**
 
 One synthetic delayed-delivery workflow reads delivery status, reads a versioned policy and records an approved resolution through exactly three tools. The worker, application database, separate sandbox HTTP service and effect database are real. Model decisions are scripted fixture decisions; no live model is called.
 
-Start with the [milestone 2 walkthrough and architecture](docs/MILESTONE-2.md) and [four-agent review with Linux evidence](docs/MILESTONE-2-REVIEW.md).
+Start with the [operator UI and budget walkthrough](docs/MILESTONE-3.md) and [budget/access-control ADR](docs/adr/0003-execution-budgets.md). The prior [milestone 2 architecture](docs/MILESTONE-2.md) and [review](docs/MILESTONE-2-REVIEW.md) remain historical evidence.
 
 ## Runtime decision
 
@@ -48,7 +48,9 @@ npm run lab -- init
 npm run lab -- serve
 ```
 
-Keep `serve` running. In another terminal, create a run and copy its returned `runId`:
+Keep `serve` running. Open `http://127.0.0.1:4318/operator`, run `npm run lab -- operator-secret` in a local terminal and paste the credential into the login form. Create/inspect/approve runs, view budgets and attempts, or seed a new dataset namespace. The secret is never placed in a URL or browser storage.
+
+The CLI also remains available. In another terminal, create a run and copy its returned `runId`:
 
 ```sh
 npm run lab -- run
@@ -71,7 +73,7 @@ This process harness exercises real worker termination/restart against the indep
 
 Implemented application code owns immutable proposals, single-use bound approval, transactional dispatch intent, stable effect keys, receipt reconciliation and sandbox fencing. Eve owns execution claiming, checkpoint replay and orchestration. Receiver-side idempotency gives one effect in specifically tested scenarios; it does not establish universal exactly-once delivery.
 
-The operator UI, optional live adapter, complete budget/retry/attempt accounting, complete adverse-case matrix, schema-validated evaluation exports and publication documentation remain later milestones. This CLI implementation is not a completed release of the full specification. A caller timeout never proves that an action stopped.
+The operator UI and durable fixture budget/retry accounting are implemented. Optional live provider accounting, the complete adverse-case matrix, schema-validated evaluation exports and publication documentation remain later milestones. This implementation is not a completed release of the full specification. A caller timeout never proves that an action stopped.
 
 No horizontal scaling, real integrations, customer data, live-model validation or production deployment is claimed. Runtime upgrades and topology changes reopen the compatibility decision and must rerun the gates.
 

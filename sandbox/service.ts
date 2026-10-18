@@ -86,6 +86,9 @@ export function createSandbox(options: {
   testMode?: boolean;
   clockFile?: string;
   testBarrierDir?: string;
+  testReadFailures?: number;
+  testReadDelayMs?: number;
+  testReadDelayCount?: number;
 }) {
   if (options.secret.length < 24)
     throw new Error("Service secret must contain at least 24 characters");
@@ -93,6 +96,26 @@ export function createSandbox(options: {
     throw new Error("Clock override requires explicit test mode");
   if (options.testBarrierDir && !options.testMode)
     throw new Error("Fault barrier requires explicit test mode");
+  if (
+    (options.testReadFailures !== undefined ||
+      options.testReadDelayMs !== undefined ||
+      options.testReadDelayCount !== undefined) &&
+    !options.testMode
+  )
+    throw new Error("Read faults require explicit test mode");
+  for (const [value, maximum] of [
+    [options.testReadFailures, 100],
+    [options.testReadDelayMs, 30000],
+    [options.testReadDelayCount, 100],
+  ])
+    if (
+      value !== undefined &&
+      (!Number.isSafeInteger(value) || value < 0 || value > maximum!)
+    )
+      throw new Error("Invalid read fault configuration");
+  let readFailuresRemaining = options.testReadFailures ?? 0;
+  let readDelaysRemaining =
+    options.testReadDelayCount ?? (options.testReadDelayMs ? 1 : 0);
   const db = new DatabaseSync(options.dbPath);
   db.exec(`PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;
     CREATE TABLE IF NOT EXISTS ownership (id INTEGER PRIMARY KEY CHECK(id=1), epoch INTEGER NOT NULL);
@@ -100,6 +123,20 @@ export function createSandbox(options: {
     CREATE TABLE IF NOT EXISTS context (id INTEGER PRIMARY KEY CHECK(id=1), revision INTEGER NOT NULL, policy_version INTEGER NOT NULL);
     INSERT OR IGNORE INTO context VALUES(1,1,1);
     CREATE TABLE IF NOT EXISTS effects (effect_id INTEGER PRIMARY KEY AUTOINCREMENT, key TEXT NOT NULL UNIQUE, payload_digest TEXT NOT NULL, run_id TEXT NOT NULL, action_json TEXT NOT NULL, committed_at INTEGER NOT NULL);`);
+  db.exec(
+    "CREATE TABLE IF NOT EXISTS namespaced_context (namespace TEXT PRIMARY KEY, revision INTEGER NOT NULL, policy_version INTEGER NOT NULL)",
+  );
+  const columns = db.prepare("PRAGMA table_info(effects)").all();
+  if (!columns.some((column) => column.name === "namespace"))
+    db.exec(
+      "ALTER TABLE effects ADD COLUMN namespace TEXT NOT NULL DEFAULT 'default'",
+    );
+  const contextFor = (namespace: string) =>
+    namespace === "default"
+      ? db.prepare("SELECT * FROM context WHERE id=1").get()
+      : db
+          .prepare("SELECT * FROM namespaced_context WHERE namespace=?")
+          .get(namespace);
   const now = () => {
     if (!options.clockFile) return Date.now();
     const value: unknown = JSON.parse(readFileSync(options.clockFile, "utf8"));
@@ -145,16 +182,38 @@ export function createSandbox(options: {
         !timingSafeEqual(actual, expected)
       )
         throw new Denied("unauthorized", 401);
+      const namespace = req.headers["x-arl-namespace"] ?? "default";
+      if (
+        typeof namespace !== "string" ||
+        !/^[A-Za-z0-9_-]{1,128}$/.test(namespace)
+      )
+        throw new Denied("invalid_namespace");
       const path = req.url ?? "";
+      if (!["/namespaces", "/epoch"].includes(path) && !contextFor(namespace))
+        throw new Denied("namespace_not_found", 404);
+      // Synthetic HTTP fault counter is process-local. Worker restarts retain this
+      // independent service process; restarting the service resets fault injection.
+      if (
+        req.method === "GET" &&
+        ["/deliveries/delivery-001", "/policy"].includes(path)
+      ) {
+        if (options.testReadDelayMs && readDelaysRemaining > 0) {
+          readDelaysRemaining--;
+          await delay(options.testReadDelayMs);
+        }
+        if (res.destroyed) return;
+        if (readFailuresRemaining > 0) {
+          readFailuresRemaining--;
+          throw new Denied("synthetic_unavailable", 503);
+        }
+      }
       if (req.method === "GET" && path === "/deliveries/delivery-001") {
-        const c = db.prepare("SELECT revision FROM context WHERE id=1").get()!;
+        const c = contextFor(namespace)!;
         send(200, { ...DELIVERY, revision: c.revision });
         return;
       }
       if (req.method === "GET" && path === "/policy") {
-        const c = db
-          .prepare("SELECT policy_version FROM context WHERE id=1")
-          .get()!;
+        const c = contextFor(namespace)!;
         send(200, { ...POLICY, version: c.policy_version });
         return;
       }
@@ -162,15 +221,35 @@ export function createSandbox(options: {
         req.method === "GET" &&
         /^\/receipts\/[A-Za-z0-9_-]{1,128}$/.test(path)
       ) {
-        const row = find(path.slice("/receipts/".length));
+        const row = db
+          .prepare("SELECT * FROM effects WHERE key=? AND namespace=?")
+          .get(path.slice("/receipts/".length), namespace);
         send(row ? 200 : 404, row ? receipt(row) : { error: "not_found" });
         return;
       }
-      if (req.method !== "POST" || !["/epoch", "/resolutions"].includes(path))
+      if (
+        req.method !== "POST" ||
+        !["/epoch", "/resolutions", "/namespaces"].includes(path)
+      )
         throw new Denied("not_found", 404);
       if (req.headers["content-type"] !== "application/json")
         throw new Denied("json_required", 415);
       const input = await body(req);
+      if (path === "/namespaces") {
+        if (
+          !object(input) ||
+          Object.keys(input).join() !== "namespace" ||
+          typeof input.namespace !== "string" ||
+          !/^[A-Za-z0-9_-]{1,128}$/.test(input.namespace)
+        )
+          throw new Denied("invalid_namespace");
+        if (input.namespace !== "default")
+          db.prepare(
+            "INSERT OR IGNORE INTO namespaced_context VALUES(?,1,1)",
+          ).run(input.namespace);
+        send(200, { namespace: input.namespace });
+        return;
+      }
       if (path === "/epoch") {
         if (!object(input) || Object.keys(input).length !== 0)
           throw new Denied("invalid_request");
@@ -189,7 +268,10 @@ export function createSandbox(options: {
       try {
         const existing = find(request.key);
         if (existing) {
-          if (existing.payload_digest !== digest)
+          if (
+            existing.payload_digest !== digest ||
+            existing.namespace !== namespace
+          )
             throw new Denied("digest_conflict", 409);
           db.exec("COMMIT");
           send(200, receipt(existing));
@@ -199,7 +281,7 @@ export function createSandbox(options: {
           .prepare("SELECT epoch FROM ownership WHERE id=1")
           .get()!.epoch;
         if (epoch !== request.epoch) throw new Denied("stale_epoch", 409);
-        const context = db.prepare("SELECT * FROM context WHERE id=1").get()!;
+        const context = contextFor(namespace)!;
         if (
           context.revision !== request.expectedRevision ||
           context.policy_version !== request.policyVersion
@@ -209,13 +291,14 @@ export function createSandbox(options: {
         if (request.expiresAt <= committedAt)
           throw new Denied("authorization_expired", 409);
         db.prepare(
-          "INSERT INTO effects(key,payload_digest,run_id,action_json,committed_at) VALUES(?,?,?,?,?)",
+          "INSERT INTO effects(key,payload_digest,run_id,action_json,committed_at,namespace) VALUES(?,?,?,?,?,?)",
         ).run(
           request.key,
           digest,
           request.runId,
           canonical(request.action),
           committedAt,
+          namespace,
         );
         result = receipt(find(request.key)!);
         db.exec("COMMIT");

@@ -54,3 +54,12 @@ test("fixture refuses any extra shell, provider or hidden tool", () => {
   );
   assert.throws(() => assertFixtureTools(permitted.slice(1)));
 });
+
+import { validateLimits } from "../agent/lib/lab/limits.ts";
+test("unknown inherited limit names cannot enter run configuration", () => {
+  for (const key of ["constructor", "toString", "__proto__"])
+    assert.throws(
+      () => validateLimits(JSON.parse(`{"${key}":1}`)),
+      /unknown limit/,
+    );
+});

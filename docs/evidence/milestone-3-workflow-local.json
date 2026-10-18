@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "mode": "fixture",
+  "environment": {
+    "node": "v24.22.0",
+    "platform": "darwin",
+    "localOnly": true,
+    "inheritedCredentials": false
+  },
+  "cases": [
+    {
+      "name": "happy_path_duplicate_approval",
+      "status": "pass",
+      "elapsedMs": 712,
+      "effects": 1,
+      "toolCalls": 3,
+      "operatorMissingTokenStatus": 403,
+      "operatorOriginStatus": 403,
+      "rawEveApprovalDenied": true
+    },
+    {
+      "name": "approval_persistence_response_gap_repaired",
+      "status": "pass",
+      "elapsedMs": 716,
+      "effects": 1,
+      "approvalDecisions": 1
+    },
+    {
+      "name": "reject_before_intent_zero_effect",
+      "status": "pass",
+      "elapsedMs": 658,
+      "effects": 0
+    },
+    {
+      "name": "cancel_before_intent_zero_effect",
+      "status": "pass",
+      "elapsedMs": 663,
+      "effects": 0
+    },
+    {
+      "name": "stale_context_after_proposal_zero_effect",
+      "status": "pass",
+      "elapsedMs": 716,
+      "effects": 0,
+      "reason": "stale_context"
+    },
+    {
+      "name": "expired_at_commit_reapproval_same_key",
+      "status": "pass",
+      "elapsedMs": 835,
+      "effects": 1,
+      "reapprovals": 1,
+      "keyPreserved": true,
+      "expiredAuthorizationEffects": 0
+    },
+    {
+      "name": "approval_wait_survives_worker_restart",
+      "status": "pass",
+      "elapsedMs": 1059,
+      "effects": 1,
+      "proposalPreserved": true
+    },
+    {
+      "name": "crash_before_dispatch",
+      "status": "pass",
+      "elapsedMs": 21133,
+      "effects": 1,
+      "recoveryMs": 20415,
+      "keyPreserved": true
+    },
+    {
+      "name": "crash_after_sandbox_commit_before_checkpoint",
+      "status": "pass",
+      "elapsedMs": 21206,
+      "effects": 1,
+      "recoveryMs": 20411,
+      "keyPreserved": true
+    },
+    {
+      "name": "unknown_outcome_absent_receipt_same_key_redispatch",
+      "status": "pass",
+      "elapsedMs": 21230,
+      "effects": 1,
+      "keyPreserved": true,
+      "reconciledAbsentReceipt": true
+    },
+    {
+      "name": "cancel_after_commit_expiry_confirmation_zero_effect",
+      "status": "pass",
+      "elapsedMs": 888,
+      "effects": 0,
+      "terminalState": "cancelled",
+      "approvalReplayBlocked": true
+    }
+  ],
+  "sourceSnapshot": {
+    "agent/agent.ts": "a3cc2f4b28153b8610c4c64934f124efd6a55bf3ffb626a81a5df50ee3615e87",
+    "agent/channels/eve.ts": "72f674ea6d5938f324a6854495b339c380af49762b8a9787e0f83a0a6328207b",
+    "agent/channels/lab.ts": "90cd4c9d99066b24616ce8167424bb8277637a7aeed30872a68cf48442346338",
+    "agent/channels/operator.ts": "f1c7d2e76f730042c417f72e21f1c6ecfe3a172986b20f89624f46b2b28695e2",
+    "agent/instructions.md": "9caf2fe4552f518b40812f03cc3ee0544a18e354a3547d595f679e98fb4dde1c",
+    "agent/lib/lab/contracts.ts": "62b065836a6e933327339586a454e1596798e7e36292b6b1c7f9e08d4c87dfe0",
+    "agent/lib/lab/execution.ts": "d153c9a783a2c97d4853d4cca106010d9040a002b90e35b867e5abf5a72f4584",
+    "agent/lib/lab/fixture-model.ts": "b9240af2c42f1a3be949938151f8ee2b0f8e25598b5845806a1e928368fd97a7",
+    "agent/lib/lab/limits.ts": "45c9808e3db7780e0dde8e27c0c617a25a8d0e9cfeff7549fe8a2cbac2bdda4b",
+    "agent/lib/lab/namespaces.ts": "b08f86ff51c6e1e0ebe6e3c5b8113484f279c0da18a5c4bb3a9072d99425c54f",
+    "agent/lib/lab/operator-ui.ts": "f3f4e8089540b284fa9e89dfa421770d48fd61938f127007e10dec12f3200498",
+    "agent/lib/lab/runtime.ts": "2441e34f2f42f550c1be5ff3d9c545cb3030789c36ab0c7d56274fef198a3e0c",
+    "agent/lib/lab/store.ts": "3d3a9133ff083ff8f6b2a6a4c0f5d6ed715f11af48fa905454e20135493a6168",
+    "agent/lib/lab/workflow.ts": "7c76b6af2cffc9055c0709c6b50500b1b86ce88b2f96f30092fd4e49471c650f",
+    "agent/lib/scripted-model.ts": "2c419e2f3cb92af34edaf584e40cf85aa46f6b4a59496d6fc66e3774d9d9d28e",
+    "agent/tools/delivery.ts": "f45028fa1cc4d9e9ceaea5aaacc522c2496925dc58bf31ed03dd6cccacbf4b01",
+    "agent/tools/probe.ts": "0bf801c44ee56697fe88ba022b4ca9c7107beec5d08db82b41b515d7488c897e",
+    "sandbox/server.ts": "d46c26ceb6203e21135c3db0d9ed381d3ee3cb3c1a6a7caff26725761c24d0cc",
+    "sandbox/service.ts": "506e87180591eb209718696cc38855305ee1de4bad519ab8f6796bbdea37015a",
+    "lab/cli.mjs": "829e45ef7d9a5f04cadec1aafcfabaa66a25b9a507a1fb109f85a185209a4c0d",
+    "lab/worker-entry.mjs": "b5cccc1e02aa320ee34e289dc5e471c24ff452a10fd64ae74dda48dc56ce4a95",
+    "test/workflow.mjs": "ecfb91b6ebaa9ad006f71cc5ca2543bad7d9b2f02daefb77586cecc70c75eb8c",
+    "test/workflow-fixture.mjs": "e1a2ee82cc69a8aee097726da055cc12127252cd847261c52f01649d78be3815",
+    "spike/locked-start.py": "3ed28b3f299a293d984098eab7efba0f7a761dade12ade8c3cb0565f4fc47a9c",
+    "package.json": "ceb9aa0d8ec8879f97a5f333c9f8153b0055de497991f3972f66ccf82da6b5ac",
+    "package-lock.json": "4e76b468c6ab8276f2e275a0d78d92c22f2a65ad0e904442c89898d01fb75364"
+  }
+}

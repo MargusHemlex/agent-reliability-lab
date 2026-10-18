@@ -1,0 +1,46 @@
+{
+  "mode": "fixture",
+  "results": [
+    {
+      "repeat": 1,
+      "status": "pass",
+      "deliveryAttempts": 3,
+      "outcomes": [
+        "transient",
+        "transient",
+        "transient"
+      ],
+      "modelTurns": 1,
+      "effects": 0
+    },
+    {
+      "repeat": 2,
+      "status": "pass",
+      "deliveryAttempts": 3,
+      "outcomes": [
+        "transient",
+        "transient",
+        "transient"
+      ],
+      "modelTurns": 1,
+      "effects": 0
+    },
+    {
+      "repeat": 3,
+      "status": "pass",
+      "deliveryAttempts": 3,
+      "outcomes": [
+        "transient",
+        "transient",
+        "transient"
+      ],
+      "modelTurns": 1,
+      "effects": 0
+    }
+  ],
+  "sourceSnapshot": {
+    "agent/lib/lab/execution.ts": "d153c9a783a2c97d4853d4cca106010d9040a002b90e35b867e5abf5a72f4584",
+    "agent/lib/lab/store.ts": "3d3a9133ff083ff8f6b2a6a4c0f5d6ed715f11af48fa905454e20135493a6168",
+    "test/workflow-fixture.mjs": "e1a2ee82cc69a8aee097726da055cc12127252cd847261c52f01649d78be3815"
+  }
+}

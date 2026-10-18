@@ -28,6 +28,7 @@
     "spike:overlap": "node spike/overlap.mjs",
     "spike:ownership": "node spike/ownership.mjs",
     "lab": "node lab/cli.mjs",
-    "test:workflow": "node test/workflow.mjs"
+    "test:workflow": "node test/workflow.mjs",
+    "test:milestone3": "node test/milestone3.mjs"
   }
 }
