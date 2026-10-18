@@ -1,11 +1,11 @@
-import { defineTool } from "eve/tools";
+import { defineTool, defineDynamic } from "eve/tools";
 import { always } from "eve/tools/approval";
 import { z } from "zod";
 import { appendFileSync, existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 
-export default defineTool({
+const probe = defineTool({
   description: "Record one synthetic probe attempt. No external side effect.",
   inputSchema: z.object({}).strict(),
   approval: always(),
@@ -41,5 +41,14 @@ export default defineTool({
     }
     record("completed");
     return { marker: "probe-result" };
+  },
+});
+
+export default defineDynamic({
+  events: {
+    "session.started": () =>
+      process.env.ARL_SPIKE_TEST === "1" && !process.env.ARL_LAB_MODE
+        ? probe
+        : null,
   },
 });

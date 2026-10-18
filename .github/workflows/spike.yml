@@ -1,4 +1,4 @@
-name: Milestone-zero checks
+name: Agent reliability checks
 on:
   push:
   pull_request:
@@ -7,7 +7,7 @@ permissions:
 jobs:
   local-spike:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     env:
       EVE_TELEMETRY_DISABLED: '1'
     steps:
@@ -18,8 +18,11 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm run typecheck
+      - run: npm run format
       - run: npm test
       - run: npm run build
+      - name: Synthetic workflow and independent service
+        run: npm run test:workflow
       - name: Reproduce default-runtime limitation
         shell: bash
         run: |
@@ -41,6 +44,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: milestone-zero-observations
-          path: spike-results/*.json
+          name: reliability-observations
+          path: |
+            spike-results/*.json
+            reports/workflow.json
           retention-days: 7

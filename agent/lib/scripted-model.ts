@@ -1,3 +1,4 @@
+import { assertFixtureTools, fixtureDecision } from "./lab/fixture-model.ts";
 import { MockLanguageModelV4 } from "ai/test";
 
 // Scripted decisions only: no provider, API key, paid call or claimed model usage.
@@ -10,7 +11,11 @@ const usage = {
   },
   outputTokens: { total: undefined, text: undefined, reasoning: undefined },
 };
-function result(options: { prompt: unknown }) {
+function result(options: { prompt: unknown; tools?: unknown }) {
+  if (process.env.ARL_LAB_MODE === "fixture") {
+    assertFixtureTools(options.tools);
+    return { ...fixtureDecision(options.prompt), usage, warnings: [] };
+  }
   const done = JSON.stringify(options.prompt).includes("probe-result");
   return {
     content: done

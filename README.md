@@ -2,9 +2,11 @@
 
 A public-by-design engineering laboratory for durable agent execution, human approval and reproducible failure testing.
 
-**Status: runtime gate passed for a constrained single-worker implementation. The complete delivery workflow is not built yet. Repository remains private.**
+**Status: milestone 2 fixture workflow implemented; nine process-based cases and 21 unit/service tests pass locally; four-agent review and Linux CI are in progress. Repository remains private.**
 
-The planned application is one synthetic delayed-delivery workflow with three sandbox tools. The implemented probes test the real eve runtime with scripted model decisions, persisted state, process crashes and duplicate HTTP deliveries.
+One synthetic delayed-delivery workflow reads delivery status, reads a versioned policy and records an approved resolution through exactly three tools. The worker, application database, separate sandbox HTTP service and effect database are real. Model decisions are scripted fixture decisions; no live model is called.
+
+Start with the [milestone 2 walkthrough and architecture](docs/MILESTONE-2.md).
 
 ## Runtime decision
 
@@ -37,9 +39,39 @@ The experiments generate ignored reports in `spike-results/`. They launch real i
 
 The fixture model is scripted. The worker, runtime persistence, callback transport and process termination are real. Probe records are synthetic local observations, not a transactional effect service or exactly-once delivery guarantee. Historical and final observations have separate source hashes in [evidence](docs/evidence/).
 
-## Next implementation boundary
+## Run the fixture workflow
 
-Build the fixture workflow and independent sandbox service specified below. The application must enforce bound, single-use approvals, hard budgets and receiver-side idempotency/fencing before any effect. Repeated approval API requests can queue an extra turn, even though the tested probe ran once. A caller timeout does not prove an external action stopped.
+After the locked install and build above:
+
+```sh
+npm run lab -- init
+npm run lab -- serve
+```
+
+Keep `serve` running. In another terminal, create a run and copy its returned `runId`:
+
+```sh
+npm run lab -- run
+npm run lab -- inspect RUN_ID
+npm run lab -- approve RUN_ID PROPOSAL_DIGEST
+npm run lab -- inspect RUN_ID
+```
+
+Wait until inspection shows `awaiting_approval`, then copy that run's explicit `proposal.digest` into the approval command. A successful run exposes its persisted sandbox receipt. `list`, `reject RUN_ID`, `cancel RUN_ID` and `resume RUN_ID` are also available. Resume reconciles an existing intent; it does not create approval.
+
+Initialization stores randomly generated local credentials in ignored `.local/lab/config.json` with restricted file permissions. The CLI reads them without printing them. Do not paste this file into reports. Use the guarded `serve` command: direct execution of the generated server or worker entry bypasses the required POSIX worker lock.
+
+```sh
+npm run test:workflow
+```
+
+This process harness exercises real worker termination/restart against the independent sandbox and writes ignored `reports/workflow.json`. All nine cases passed locally, including stale context, expiry/reapproval, approval replay and both crash barriers. Recovery took 22,015 ms before dispatch and 20,365 ms after sandbox commit, with one effect in each successful case. [Recorded local observations](docs/evidence/milestone-2-local.json) include source hashes; these are single samples, not reliability statistics. Unit/service tests and runtime compatibility probes are separate checks. See [milestone 2](docs/MILESTONE-2.md) for the acceptance boundary and remaining work.
+
+## Scope and next milestones
+
+Implemented application code owns immutable proposals, single-use bound approval, transactional dispatch intent, stable effect keys, receipt reconciliation and sandbox fencing. Eve owns execution claiming, checkpoint replay and orchestration. Receiver-side idempotency gives one effect in specifically tested scenarios; it does not establish universal exactly-once delivery.
+
+The operator UI, optional live adapter, complete budget/retry/attempt accounting, complete adverse-case matrix, schema-validated evaluation exports and publication documentation remain later milestones. This CLI implementation is not a completed release of the full specification. A caller timeout never proves that an action stopped.
 
 No horizontal scaling, real integrations, customer data, live-model validation or production deployment is claimed. Runtime upgrades and topology changes reopen the compatibility decision and must rerun the gates.
 
@@ -49,6 +81,6 @@ No horizontal scaling, real integrations, customer data, live-model validation o
 - [Accepted runtime decision](docs/adr/0002-single-worker-runtime-decision.md)
 - [Four-agent overlap review and Linux evidence](docs/OVERLAP-REVIEW.md)
 
-Eve owns orchestration/checkpoint replay. The author designed the scripted adapter, failure/overlap harness, callback observer, actual-worker locking, access controls and explicit evidence boundaries. Application authorization and effect safety remain separate responsibilities.
+Eve owns orchestration/checkpoint replay. The author designed the scripted adapter, failure/overlap harness, callback observer, actual-worker locking, access controls and explicit evidence boundaries. The author also designed the application authorization transactions, typed tool contracts, independent sandbox service, fencing protocol and CLI. Application authorization and effect safety remain separate from framework orchestration.
 
 No original product code, customer data, production prompts or provider sessions are included. All documentation is English. Public release requires final code/history/artifact review and a later explicit owner decision. Existing products and deployments are unchanged.

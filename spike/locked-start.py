@@ -4,9 +4,10 @@ import os
 from pathlib import Path
 import sys
 
-if os.environ.get('ARL_SPIKE_TEST') != '1':
+lab_mode = os.environ.get('ARL_LAB_MODE') == 'fixture'
+if not lab_mode and os.environ.get('ARL_SPIKE_TEST') != '1':
     sys.exit('Explicit ARL_SPIKE_TEST=1 required')
-if not os.environ.get('ARL_SPIKE_SECRET'):
+if not lab_mode and not os.environ.get('ARL_SPIKE_SECRET'):
     sys.exit('Missing ephemeral operator secret')
 port = int(sys.argv[2])
 if not 1 <= port <= 65535:
@@ -23,4 +24,5 @@ os.set_inheritable(lock, True)
 # This is the same generated Nitro server entry used by eve start in pinned 0.80.1.
 runtime_env = dict(os.environ)
 runtime_env.update(HOST='127.0.0.1', NITRO_HOST='127.0.0.1', PORT=str(port), NITRO_PORT=str(port))
-os.execve(sys.argv[1], [sys.argv[1], '.output/server/index.mjs'], runtime_env)
+entry = 'lab/worker-entry.mjs' if lab_mode else '.output/server/index.mjs'
+os.execve(sys.argv[1], [sys.argv[1], entry], runtime_env)
