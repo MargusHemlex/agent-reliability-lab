@@ -4,7 +4,7 @@ The active history has been cleaned. Original source IDs in immutable reports re
 
 # Evidence index
 
-Current implementation evidence is recorded in [milestone 4](../MILESTONE-4-REVIEW.md) and [milestone 5](../MILESTONE-5-REVIEW.md). Canonical fixture/live report schemas are now implemented. Genuine live-provider validation remains not run. Historical records below retain their original scope; statements about deferred work describe that earlier stage. The current CI uploads canonical evaluation/live reports and focused walkthrough observations, not all raw spike outputs.
+Current implementation evidence is recorded in [milestone 4](../MILESTONE-4-REVIEW.md) and [milestone 5](../MILESTONE-5-REVIEW.md). Canonical fixture/live report schemas are now implemented. Those CI runs did not execute a genuine provider. A later [bounded genuine smoke](../LIVE-SMOKE-REVIEW.md) now has separate live evidence. Historical records below retain their original scope; statements about deferred work describe that earlier stage. The current CI uploads canonical evaluation/live reports and focused walkthrough observations, not all raw spike outputs.
 
 ## Historical milestone-zero observations
 
@@ -41,3 +41,7 @@ The later overlap/ownership investigation is documented in ../OVERLAP-REVIEW.md 
 ## Fresh observations after history cleanup
 
 `history-cleanup-ci-fixture.*`, `history-cleanup-ci-walkthrough.*` and `history-cleanup-ci-live-not-run.*` come from the cleaned active repository's [CI run](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39131096180) at `7e2b99cd9979e6d30fdc80bfe8e72b83b51f70c0`. These are new observations with new commit provenance; prior report payloads remain unchanged. [Cleanup verification](history-cleanup-verification.json) records the private backup and rewrite checks.
+
+## First genuine bounded model smoke
+
+`live-smoke-2026-10-18.json` and `.md` preserve the actual successful report at clean source commit `46c072ac457a9566749052b439de68b38744cc01`: one executed/passed sample, three calls, one independent effect, no duplicate, known token usage and USD 0.000272 estimated cost. See [scope and validation](../LIVE-SMOKE-REVIEW.md). Previous fixture and live-not-run payloads remain unchanged.

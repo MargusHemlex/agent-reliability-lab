@@ -1,5 +1,7 @@
 # Milestone 5 review and validation boundary
 
+Historical scope: this document records the results available at that stage. The subsequent [first genuine live smoke](LIVE-SMOKE-REVIEW.md) passed on 2026-10-18; its new evidence does not retrospectively change earlier `not_run` observations.
+
 The owner elected to verify this stage without a model API. The implementation includes a real Gateway adapter, but genuine service connectivity, model behavior and billing remain **not run**. The compiled offline transport test is explicitly simulation, not a successful live smoke.
 
 ## Four-agent participation

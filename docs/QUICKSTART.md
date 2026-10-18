@@ -72,7 +72,7 @@ Replace `RUN_ID` with the returned ID. Wait for `awaiting_approval`, then copy t
 
 ## Optional model execution
 
-Default mode is fixture. The adapter exists, but genuine provider connectivity, model behavior and billing are not validated. See [milestone 5](MILESTONE-5.md) before any separately opted-in live run; do not supply keys to reproduce the walkthrough. With explicit opt-in disabled, `npm run evaluate:live` produces `not_run` evidence with unknown usage, cost and effects rather than a passing live result.
+Default mode is fixture. The adapter passed [one bounded genuine smoke](LIVE-SMOKE-REVIEW.md). This establishes connectivity and one happy path, not broad model reliability or reconciled billing. See [milestone 5](MILESTONE-5.md) before any separately opted-in live run; do not supply keys to reproduce the walkthrough. With explicit opt-in disabled, `npm run evaluate:live` produces `not_run` evidence with unknown usage, cost and effects rather than a passing live result.
 
 ## Troubleshooting
 

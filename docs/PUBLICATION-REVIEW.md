@@ -22,7 +22,7 @@ A repeated candidate scan covered 126 tracked files, 15 reachable commits and 21
 
 English deliverables include README, architecture, quickstart, five-minute walkthrough, threat model, testing guide, security guidance, contributing instructions, license, dependency notices and limitations. Previous milestone documents and source-bound evidence retain their historical claims; newer summaries do not retroactively upgrade them.
 
-Genuine model-provider validation remains `not_run` by owner choice. Native browser reset-confirmation completion and mobile verification remain unverified. The experimental runtime is one POSIX host and one worker. The [threat model](THREAT-MODEL.md) documents residual risks. Any later public release requires an explicit owner decision after the publication hold is resolved; original repositories and deployments remain unchanged.
+The earlier evaluations recorded genuine provider execution as `not_run`. A subsequent owner-authorized [bounded live smoke](LIVE-SMOKE-REVIEW.md) passed one synthetic sample; earlier evidence remains unchanged. Native browser reset-confirmation completion and mobile verification remain unverified. The experimental runtime is one POSIX host and one worker. The [threat model](THREAT-MODEL.md) documents residual risks. Any later public release requires an explicit owner decision after the publication hold is resolved; original repositories and deployments remain unchanged.
 
 ## Post-cleanup verification
 

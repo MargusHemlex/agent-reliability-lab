@@ -52,7 +52,7 @@ Each run persists immutable limits: five model calls, eight physical tool execut
 
 The optional Gateway adapter reserves estimated cost before dispatch. Its default USD 0.10 run cap may be lowered. The dated price table and input-byte/framing heuristic are estimates, not an invoice or account-wide billing limit. Application provider retries/fallbacks are disabled. Unknown usage or an unresolved reservation blocks further calls in the affected run, including after restart. Abort stops local waiting but cannot establish that a provider stopped or did not bill. See [milestone 5](MILESTONE-5.md).
 
-Fixture, offline Gateway simulation and genuine live evidence are distinct. Offline simulation uses the compiled worker and adapter with substituted transport; it makes no actual provider calls. Genuine provider connectivity, choices and billing remain `not_run`. Unknown actual usage and cost remain null.
+Fixture, offline Gateway simulation and genuine live evidence are distinct. Offline simulation uses the compiled worker and adapter with substituted transport; it makes no actual provider calls. One separately authorized [genuine synthetic smoke](LIVE-SMOKE-REVIEW.md) passed. Broader live model behavior and invoice reconciliation remain unvalidated. Unknown actual usage and cost remain null.
 
 ## Evidence and operator boundary
 

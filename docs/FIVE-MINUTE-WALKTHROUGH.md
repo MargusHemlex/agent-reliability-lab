@@ -48,7 +48,7 @@ The first produces strict fixture reports. The second exercises the compiled ada
 
 ## 4:15 — Be explicit about limits
 
-> This topology is one POSIX host, SQLite and one worker. The twenty-second eve lease is experimental and hash-guarded; the default 860-second setting misses the recovery target. We tested named failures and one-effect outcomes here, not distributed availability or universal exactly-once delivery. The optional real-model adapter has persistent estimated budgets, but no genuine provider run has been performed.
+> This topology is one POSIX host, SQLite and one worker. The twenty-second eve lease is experimental and hash-guarded; the default 860-second setting misses the recovery target. We tested named failures and one-effect outcomes here, not distributed availability or universal exactly-once delivery. The optional real-model adapter has persistent estimated budgets, and one separately documented genuine smoke has passed. This guided crash experiment remains a scripted fixture, not live-model recovery evidence.
 
 The repo remains private pending the owner's release decision. Real integrations, customer data and production deployment are outside this lab. Core desktop operator flows were exercised; native reset-confirmation completion and mobile verification remain open.
 

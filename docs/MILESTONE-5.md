@@ -1,5 +1,7 @@
 # Milestone 5: optional Gateway adapter and bounded offline verification
 
+Historical scope: this document records the results available at that stage. The subsequent [first genuine live smoke](LIVE-SMOKE-REVIEW.md) passed on 2026-10-18; its new evidence does not retrospectively change earlier `not_run` observations.
+
 The optional real-model adapter is implemented. All 79 unit/HTTP tests, the compiled offline workflow and 33 fixture cases passed on exact-code Linux CI; see the [review and evidence](MILESTONE-5-REVIEW.md). This milestone was verified without a model API key: real Gateway service connectivity, model behavior and billing are **not run**. Offline transport simulation is not live-provider evidence. The repository remains private.
 
 ## Key-free verification
