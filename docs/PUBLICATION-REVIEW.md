@@ -23,3 +23,7 @@ A repeated candidate scan covered 126 tracked files, 15 reachable commits and 21
 English deliverables include README, architecture, quickstart, five-minute walkthrough, threat model, testing guide, security guidance, contributing instructions, license, dependency notices and limitations. Previous milestone documents and source-bound evidence retain their historical claims; newer summaries do not retroactively upgrade them.
 
 Genuine model-provider validation remains `not_run` by owner choice. Native browser reset-confirmation completion and mobile verification remain unverified. The experimental runtime is one POSIX host and one worker. The [threat model](THREAT-MODEL.md) documents residual risks. Any later public release requires an explicit owner decision after the publication hold is resolved; original repositories and deployments remain unchanged.
+
+## Post-cleanup verification
+
+The active repository now contains only the cleaned history; the original repository remains a private read-only archive. Fresh [CI](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39131096180) at `7e2b99cd9979e6d30fdc80bfe8e72b83b51f70c0` passes the complete gates with new source-bound evidence. See [history cleanup](HISTORY-CLEANUP.md) for restoration checks, zero-identifier history scan, immutable historical-evidence handling and original-to-rewritten commit mapping. The historical disclosure condition is resolved for the active repository. Visibility remains PRIVATE until the owner explicitly authorizes publication.

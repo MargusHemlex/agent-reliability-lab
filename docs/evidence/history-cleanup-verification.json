@@ -21,5 +21,17 @@
   "independentRemoteCloneVerified": true,
   "remoteCloneCommitCount": 17,
   "remoteCloneBlobCount": 234,
-  "remoteCloneIdentifierHits": 0
+  "remoteCloneIdentifierHits": 0,
+  "authorAndCommitterIdentitiesAndDatesPreserved": true,
+  "freshCI": {
+    "url": "https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39131096180",
+    "sourceCommit": "7e2b99cd9979e6d30fdc80bfe8e72b83b51f70c0",
+    "conclusion": "success",
+    "unitHttpPass": 79,
+    "fixtureCasesPass": 33,
+    "walkthroughCasesPass": 2,
+    "walkthroughRecoveryMs": 20157,
+    "liveProvider": "not_run",
+    "sourceInventoriesVerified": true
+  }
 }

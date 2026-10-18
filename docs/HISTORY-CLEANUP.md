@@ -25,3 +25,13 @@ Existing reports retain their original source commit IDs and hashes. They are no
 Fresh CI on this active repository establishes new provenance for the cleaned history. The original private archive is excluded from any future public release; do not mirror it or copy its refs into the active repository. Previously cloned copies may retain old objects and should not be used to repopulate this repository. The local owner-only bundle also stays private.
 
 The historical-identifier hold is resolved for the verified active history. Explicit owner publication approval is still required. Genuine application-provider validation remains `not_run`; the documented browser/reset/mobile and experimental-runtime limits remain unchanged. No original product repository or deployment was modified.
+
+## Fresh verification on the cleaned repository
+
+[Linux CI](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39131096180) passed at rewritten-history commit `7e2b99cd9979e6d30fdc80bfe8e72b83b51f70c0`: 79 unit/HTTP tests, all 33 fixture cases, the two-case walkthrough, offline Gateway path, generated schemas, documentation checks, build and all runtime regression gates. Downloaded canonical reports passed schema/semantic and current-source freshness checks before this documentation commit. The guided report's source inventory and assertions also matched.
+
+- [Fresh full fixture evidence](evidence/history-cleanup-ci-fixture.json)
+- [Fresh guided walkthrough](evidence/history-cleanup-ci-walkthrough.json)
+- [Fresh live-not-run record](evidence/history-cleanup-ci-live-not-run.json)
+
+These new observations belong to the cleaned active history; they do not replace or retrospectively relabel archived evidence. Publication remains a separate explicit owner decision.

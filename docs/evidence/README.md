@@ -37,3 +37,7 @@ The later overlap/ownership investigation is documented in ../OVERLAP-REVIEW.md 
 ## Documentation-stage observations
 
 `milestone-6-linux-fixture.*`, `milestone-6-linux-live-not-run.*` and `milestone-6-linux-walkthrough.*` identify executable-source commit `16b047018a7b2dba286a38146104721c11113af9` from [CI run](https://github.com/MargusHemlex/agent-reliability-lab-private-history-backup-20261018/actions/runs/39123089377). The full fixture report passes all 33 cases; live-provider samples remain unexecuted. The guided observation has its own strict two-case schema and is not a replacement for the full evaluation. Its same-key crash recovery took 20758 ms including restart. See [publication review](../PUBLICATION-REVIEW.md): verification passed but release remains on hold. The historical browser screenshot was renamed from `.png` to `.jpg` to match its unchanged JPEG bytes.
+
+## Fresh observations after history cleanup
+
+`history-cleanup-ci-fixture.*`, `history-cleanup-ci-walkthrough.*` and `history-cleanup-ci-live-not-run.*` come from the cleaned active repository's [CI run](https://github.com/MargusHemlex/agent-reliability-lab/actions/runs/39131096180) at `7e2b99cd9979e6d30fdc80bfe8e72b83b51f70c0`. These are new observations with new commit provenance; prior report payloads remain unchanged. [Cleanup verification](history-cleanup-verification.json) records the private backup and rewrite checks.
